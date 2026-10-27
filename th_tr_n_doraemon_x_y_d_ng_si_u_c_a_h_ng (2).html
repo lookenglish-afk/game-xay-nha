@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thị Trấn Doraemon Pastel 3D - Xây Dựng Siêu Cửa Hàng Lớp Học (Cấp 1 ➔ 20)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Nunito', sans-serif;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #dff2ff;
+            touch-action: none;
+        }
+        #townCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            touch-action: none;
+        }
+        #townCanvas:active {
+            cursor: grabbing;
+        }
+
+        /* Pastel "Our Little Town" + Doraemon UI Styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border: 2.5px solid #1e3a5f;
+            box-shadow: 0 8px 24px rgba(15, 42, 74, 0.16), 0 4px 0 #1e3a5f;
+            border-radius: 20px;
+        }
+        .pill-btn {
+            border: 2px solid #1e3a5f;
+            box-shadow: 0 3px 0 #1e3a5f;
+            transition: all 0.14s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .pill-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.04);
+        }
+        .pill-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #1e3a5f;
+        }
+        .award-chip {
+            background: linear-gradient(180deg, #effdf5 0%, #d1fae5 100%);
+            border: 2px solid #059669;
+            color: #065f46;
+            box-shadow: 0 2px 0 #059669;
+            border-radius: 9999px;
+            transition: all 0.12s ease;
+        }
+        .award-chip:hover {
+            background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%);
+            transform: translateY(-1.5px) scale(1.02);
+        }
+        .award-chip:active {
+            transform: translateY(1px);
+            box-shadow: 0 0px 0 #059669;
+        }
+        .dock-tool-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2.5px solid #1e3a5f;
+            box-shadow: 0 4px 0 #1e3a5f;
+            border-radius: 16px;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dock-tool-btn:hover {
+            transform: translateY(-4px);
+            background: #fffbeb;
+        }
+        .dock-tool-btn.active {
+            background: linear-gradient(180deg, #fde047 0%, #facc15 100%);
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 6px 0 #1e3a5f, 0 0 14px rgba(250, 204, 21, 0.7);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="relative select-none overflow-hidden">
+
+    <!-- ==================== 1. TOP HEADER BAR ("OUR LITTLE TOWN" + DORAEMON STYLE) ==================== -->
+    <header class="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b-2 border-[#1e3a5f] px-3 py-2 shadow-sm">
+        <div class="max-w-[1920px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            
+            <!-- Left: Class Title & Quick Stats -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-b from-sky-400 to-blue-600 border-2 border-[#1e3a5f] flex items-center justify-center shadow-sm shrink-0">
+                    <!-- Mini Doraemon SVG -->
+                    <svg viewBox="0 0 40 40" class="w-8 h-8">
+                        <circle cx="20" cy="20" r="17" fill="#1d9bf0" stroke="#1e3a5f" stroke-width="2.5"/>
+                        <circle cx="20" cy="23" r="13.5" fill="#ffffff" stroke="#1e3a5f" stroke-width="2"/>
+                        <ellipse cx="16" cy="14" rx="3.8" ry="4.6" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+                        <ellipse cx="24" cy="14" rx="3.8" ry="4.6" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+                        <circle cx="17" cy="14" r="1.5" fill="#1e3a5f"/>
+                        <circle cx="23" cy="14" r="1.5" fill="#1e3a5f"/>
+                        <circle cx="20" cy="18.5" r="2.8" fill="#ef4444" stroke="#1e3a5f" stroke-width="1.8"/>
+                        <path d="M13 24 Q20 30 27 24" fill="none" stroke="#1e3a5f" stroke-width="2.2" stroke-linecap="round"/>
+                        <rect x="10" y="33" width="20" height="4" rx="2" fill="#ef4444" stroke="#1e3a5f" stroke-width="1.5"/>
+                        <circle cx="20" cy="35.5" r="3" fill="#facc15" stroke="#1e3a5f" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 border border-pink-300">🌸 OUR DORAEMON TOWN</span>
+                        <span id="builtCountBadge" class="text-[11px] font-extrabold text-slate-500">12/16 Ô đã xây</span>
+                    </div>
+                    <input id="classTitleInput" type="text" value="MS MINDY'S STUDENTS • DORAEMON PASTEL TOWN" onchange="saveClassTitle(this.value)"
+                        class="font-black text-sm sm:text-lg text-[#1e3a5f] bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 focus:bg-sky-50/50 rounded px-1 -ml-1 outline-none w-64 sm:w-96 truncate"
+                        title="Bấm để đổi tên Lớp Học của bạn">
+                </div>
+            </div>
+
+            <!-- Center: Action Toolbar Buttons (matching "Our Little Town" menu bar) -->
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <button onclick="openEmptyConfirmModal()" class="pill-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-black text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-1" title="Đặt toàn bộ 16 ô về nền cỏ trống để học sinh tự chọn quán xây từ đầu">
+                    <span>🌱</span><span>Về Đất Trống</span>
+                </button>
+                <button onclick="loadSamplePastelTown()" class="pill-btn bg-pink-100 hover:bg-pink-200 text-pink-900 font-black text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-1" title="Nạp thị trấn Pastel mẫu đẹp lung linh như ảnh">
+                    <span>✨</span><span>Nạp Mẫu Đẹp</span>
+                </button>
+                <button onclick="openRandomPickerModal()" class="pill-btn bg-purple-100 hover:bg-purple-200 text-purple-900 font-black text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-1">
+                    <span>🎲</span><span>Random Pick</span>
+                </button>
+                <button onclick="openLeaderboardModal()" class="pill-btn bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-xs px-2.5 py-1.5 rounded-xl flex items-center gap-1">
+                    <span>🏆</span><span>Bảng Xếp Hạng</span>
+                </button>
+                <button onclick="openClassRewardModal()" class="pill-btn bg-gradient-to-r from-amber-300 to-yellow-400 text-[#1e3a5f] font-black text-xs px-3 py-1.5 rounded-xl flex items-center gap-1">
+                    <span>🎓</span><span>Thưởng Cả Lớp</span>
+                </button>
+                <button id="soundBtn" onclick="toggleSound()" class="pill-btn bg-sky-100 text-[#1e3a5f] font-black text-xs px-2.5 py-1.5 rounded-xl">
+                    🔊 Âm thanh
+                </button>
+            </div>
+
+            <!-- Right: Village Fund Rainbow Progress Bar -->
+            <div class="hidden xl:flex items-center gap-3 bg-slate-50 border-2 border-[#1e3a5f] rounded-2xl px-3 py-1">
+                <div>
+                    <div class="flex items-center justify-between text-[11px] font-black text-[#1e3a5f] gap-3">
+                        <span>🌈 Quỹ Điểm Thị Trấn:</span>
+                        <span id="totalTownPoints" class="text-blue-600 text-sm">0 ⭐</span>
+                    </div>
+                    <div class="w-44 h-2.5 bg-slate-200 rounded-full overflow-hidden border border-slate-400 mt-0.5">
+                        <div id="townProgressBar" class="h-full bg-gradient-to-r from-pink-500 via-amber-400 to-emerald-400 transition-all duration-500" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="text-right border-l border-slate-300 pl-2.5">
+                    <div class="text-[10px] font-bold text-slate-500">Siêu Cửa Hàng</div>
+                    <div id="megaCountDisplay" class="font-black text-xs text-rose-600">0 / 16 👑</div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ==================== 2. MAIN INTERACTIVE ISOMETRIC CANVAS ==================== -->
+    <canvas id="townCanvas"></canvas>
+
+    <!-- ==================== 3. LEFT PLOT DIRECTORY DRAWER (16 PLOTS #1 - #16) ==================== -->
+    <div id="leftDirectoryPanel" class="fixed top-16 left-3 z-20 w-60 sm:w-64 glass-card p-2.5 transition-transform duration-300 max-h-[calc(100vh-145px)] flex flex-col">
+        <div class="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-200">
+            <div class="flex items-center gap-1.5 font-black text-xs sm:text-sm text-[#1e3a5f]">
+                <span>🏘️</span>
+                <span>DANH SÁCH 16 Ô NHÀ</span>
+            </div>
+            <button onclick="toggleLeftDirectory()" id="toggleDirBtn" class="w-6 h-6 rounded-lg bg-slate-200 hover:bg-slate-300 text-[#1e3a5f] font-black text-xs flex items-center justify-center" title="Thu gọn / Mở rộng">−</button>
+        </div>
+
+        <div id="leftDirectoryBody" class="overflow-y-auto space-y-1.5 pr-1 flex-1">
+            <!-- Populated dynamically with plots #1 to #16 -->
+        </div>
+
+        <div id="leftDirectoryFooter" class="pt-2 mt-1.5 border-t border-slate-200 text-[11px] font-bold text-slate-500 flex items-center justify-between">
+            <span>💡 Kéo chuột để di chuyển</span>
+            <button onclick="resetCamera()" class="text-blue-600 font-black hover:underline">Căn giữa 🎯</button>
+        </div>
+    </div>
+
+    <!-- ==================== 4. RIGHT-SIDE STUDENT & SHOP INSPECTOR ("OUR LITTLE TOWN" CARD) ==================== -->
+    <aside id="inspectorCard" class="fixed top-16 right-3 z-30 w-80 sm:w-96 glass-card p-3.5 max-h-[calc(100vh-140px)] flex flex-col transition-all duration-200">
+        <!-- Header with Plot Number & Close Button -->
+        <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-200">
+            <div class="flex items-center gap-2.5">
+                <div id="inspPlotBadge" class="w-10 h-10 rounded-full bg-emerald-700 text-white border-2 border-[#1e3a5f] font-black text-base flex items-center justify-center shadow shrink-0">
+                    #1
+                </div>
+                <div>
+                    <div id="inspHeaderTitle" class="font-black text-sm sm:text-base text-[#1e3a5f] leading-tight">No. 1 - Bakery</div>
+                    <div id="inspHeaderSub" class="text-xs font-extrabold text-amber-600">Cấp 1/20 • Khởi đầu</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <button onclick="focusCameraOnPlot(selectedPlotId)" class="w-8 h-8 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 font-black text-sm flex items-center justify-center border border-sky-300" title="Phóng tới ô nhà này">🎯</button>
+                <button onclick="closeInspector()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 font-black text-sm flex items-center justify-center border border-slate-300">✕</button>
+            </div>
+        </div>
+
+        <!-- Inspector Sub-Navigation Tabs -->
+        <div class="grid grid-cols-4 gap-1 my-2 bg-slate-100 p-1 rounded-xl border border-slate-300 text-[11px] font-black">
+            <button onclick="switchInspectorTab('award')" id="inspTab_award" class="py-1.5 rounded-lg bg-white text-[#1e3a5f] shadow-sm">🎓 Cộng Điểm</button>
+            <button onclick="switchInspectorTab('shop')" id="inspTab_shop" class="py-1.5 rounded-lg text-slate-600 hover:text-[#1e3a5f]">🏗️ Loại Quán</button>
+            <button onclick="switchInspectorTab('logo')" id="inspTab_logo" class="py-1.5 rounded-lg text-slate-600 hover:text-[#1e3a5f]">🐱 Logo Dora</button>
+            <button onclick="switchInspectorTab('deco')" id="inspTab_deco" class="py-1.5 rounded-lg text-slate-600 hover:text-[#1e3a5f]">🌸 Trang Trí</button>
+        </div>
+
+        <!-- Scrollable Tab Content Area -->
+        <div id="inspectorBody" class="overflow-y-auto pr-1 space-y-3 flex-1 text-[#1e3a5f]">
+            <!-- Populated dynamically by JS -->
+        </div>
+    </aside>
+
+    <!-- ==================== 5. BOTTOM INTERACTIVE TOOLBAR (ALL BUTTONS 100% WORKING) ==================== -->
+    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2.5 bg-white/95 backdrop-blur-md px-3 py-2 rounded-2xl border-2 border-[#1e3a5f] shadow-lg">
+        <button id="toolBtn_award" onclick="triggerBottomTool('award')" class="dock-tool-btn active px-3 py-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-black text-[#1e3a5f]">
+            <span class="text-lg">🎓</span>
+            <span class="hidden sm:inline">Cộng Điểm Ô</span>
+        </button>
+        <button id="toolBtn_shop" onclick="triggerBottomTool('shop')" class="dock-tool-btn px-3 py-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-black text-[#1e3a5f]">
+            <span class="text-lg">🏗️</span>
+            <span class="hidden sm:inline">Xây / Đổi Quán</span>
+        </button>
+        <button id="toolBtn_logo" onclick="triggerBottomTool('logo')" class="dock-tool-btn px-3 py-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-black text-[#1e3a5f]">
+            <span class="text-lg">🐱</span>
+            <span class="hidden sm:inline">Logo Doraemon</span>
+        </button>
+        <button id="toolBtn_deco" onclick="triggerBottomTool('deco')" class="dock-tool-btn px-3 py-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-black text-[#1e3a5f]">
+            <span class="text-lg">🌸</span>
+            <span class="hidden sm:inline">Trang Trí & Bảng Hiệu</span>
+        </button>
+        <button id="toolBtn_levelup" onclick="instantLevelUpSelected()" class="dock-tool-btn px-3 py-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-black text-emerald-800 bg-emerald-50">
+            <span class="text-lg">⬆️</span>
+            <span class="hidden sm:inline">Lên 1 Cấp Ngay</span>
+        </button>
+    </div>
+
+    <!-- ==================== 6. ON-SCREEN CAMERA D-PAD & ZOOM CONTROLS (BOTTOM-RIGHT) ==================== -->
+    <div class="fixed bottom-3 right-3 z-20 flex items-end gap-2">
+        <!-- Zoom +/- Stack -->
+        <div class="flex flex-col gap-1 bg-white/90 p-1.5 rounded-2xl border-2 border-[#1e3a5f] shadow-md">
+            <button onclick="zoomCameraBy(1.18)" class="w-8 h-8 rounded-xl bg-sky-100 hover:bg-sky-200 font-black text-base text-[#1e3a5f] flex items-center justify-center" title="Phóng to (+)">➕</button>
+            <button onclick="zoomCameraBy(0.84)" class="w-8 h-8 rounded-xl bg-sky-100 hover:bg-sky-200 font-black text-base text-[#1e3a5f] flex items-center justify-center" title="Thu nhỏ (-)">➖</button>
+        </div>
+
+        <!-- Directional Pan Pad -->
+        <div class="grid grid-cols-3 gap-1 bg-white/90 p-1.5 rounded-2xl border-2 border-[#1e3a5f] shadow-md">
+            <div></div>
+            <button onclick="panCameraBy(0, 110)" class="w-8 h-8 rounded-xl bg-amber-100 hover:bg-amber-200 font-black text-sm flex items-center justify-center" title="Kéo lên">⬆️</button>
+            <div></div>
+            <button onclick="panCameraBy(110, 0)" class="w-8 h-8 rounded-xl bg-amber-100 hover:bg-amber-200 font-black text-sm flex items-center justify-center" title="Kéo sang trái">⬅️</button>
+            <button onclick="resetCamera()" class="w-8 h-8 rounded-xl bg-rose-100 hover:bg-rose-200 font-black text-sm flex items-center justify-center" title="Căn giữa bản đồ">🎯</button>
+            <button onclick="panCameraBy(-110, 0)" class="w-8 h-8 rounded-xl bg-amber-100 hover:bg-amber-200 font-black text-sm flex items-center justify-center" title="Kéo sang phải">➡️</button>
+            <div></div>
+            <button onclick="panCameraBy(0, -110)" class="w-8 h-8 rounded-xl bg-amber-100 hover:bg-amber-200 font-black text-sm flex items-center justify-center" title="Kéo xuống">⬇️</button>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- ==================== 7. MODALS (RANDOM PICKER, LEADERBOARD, CLASS REWARD, RESET CONFIRM) ==================== -->
+
+    <!-- 7A. Random Student Picker Modal -->
+    <div id="randomPickerModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3">
+        <div class="glass-card w-full max-w-md p-5 text-center relative">
+            <button onclick="closeModal('randomPickerModal')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-100 font-black text-slate-600">✕</button>
+            <div class="text-4xl mb-1">🎲🚁</div>
+            <h3 class="font-black text-xl text-[#1e3a5f]">VÒNG QUAY GỌI TÊN NGẪU NHIÊN</h3>
+            <p class="text-xs font-bold text-slate-500 mb-4">Chong chóng tre Doraemon sẽ chọn ngẫu nhiên 1 bạn trong lớp!</p>
+
+            <div id="randomResultBox" class="bg-gradient-to-b from-amber-50 to-yellow-100 border-3 border-[#1e3a5f] rounded-2xl p-5 my-3 shadow-inner">
+                <div id="randomPlotNumber" class="text-xs font-black uppercase text-amber-700">Ô NHÀ MAY MẮN</div>
+                <div id="randomStudentName" class="text-2xl sm:text-3xl font-black text-[#1e3a5f] my-1">Sẵn sàng quay!</div>
+                <div id="randomShopInfo" class="text-xs font-extrabold text-blue-700">Bấm nút bên dưới để bắt đầu</div>
+            </div>
+
+            <div class="flex gap-2 justify-center mt-4">
+                <button onclick="spinRandomStudent()" class="pill-btn bg-amber-400 hover:bg-amber-300 text-[#1e3a5f] font-black px-5 py-2.5 rounded-xl text-sm flex-1">
+                    🎰 Quay Ngẫu Nhiên
+                </button>
+                <button id="randomGoBtn" onclick="selectRandomPickedPlot()" class="hidden pill-btn bg-emerald-500 text-white font-black px-4 py-2.5 rounded-xl text-sm">
+                    🎓 Tới Ô & Cộng Điểm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7B. Leaderboard Modal -->
+    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3">
+        <div class="glass-card w-full max-w-2xl p-5 relative max-h-[85vh] flex flex-col">
+            <button onclick="closeModal('leaderboardModal')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-100 font-black text-slate-600">✕</button>
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-3xl">🏆</span>
+                <div>
+                    <h3 class="font-black text-xl text-[#1e3a5f]">BẢNG XẾP HẠNG SIÊU CỬA HÀNG LỚP HỌC</h3>
+                    <p class="text-xs font-bold text-slate-500">Thi đua tích lũy điểm phát triển từ Quán Cấp 1 lên Siêu Cửa Hàng Cấp 20</p>
+                </div>
+            </div>
+            <div id="leaderboardList" class="overflow-y-auto space-y-2 pr-1 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- 7C. Class-Wide Reward Modal -->
+    <div id="classRewardModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3">
+        <div class="glass-card w-full max-w-lg p-5 relative">
+            <button onclick="closeModal('classRewardModal')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-100 font-black text-slate-600">✕</button>
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-4xl">🎓🎉</span>
+                <div>
+                    <h3 class="font-black text-xl text-[#1e3a5f]">THƯỞNG ĐIỂM TOÀN BỘ LỚP HỌC</h3>
+                    <p class="text-xs font-bold text-slate-500">Cộng điểm đồng loạt cho tất cả các ô nhà trên bản đồ!</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-3">
+                <button onclick="rewardEntireClass(5, 'Cả lớp chú ý lắng nghe bài giảng!')" class="award-chip p-3 text-left flex items-center justify-between">
+                    <span class="font-black text-xs sm:text-sm">👏 Cả lớp trật tự & chú ý</span>
+                    <span class="font-black text-sm">+5 ⭐</span>
+                </button>
+                <button onclick="rewardEntireClass(10, 'Hoàn thành xuất sắc hoạt động nhóm!')" class="award-chip p-3 text-left flex items-center justify-between">
+                    <span class="font-black text-xs sm:text-sm">🤝 Thảo luận sôi nổi</span>
+                    <span class="font-black text-sm">+10 ⭐</span>
+                </button>
+                <button onclick="rewardEntireClass(25, '100% Làm đầy đủ Bài Tập Về Nhà!')" class="award-chip p-3 text-left flex items-center justify-between">
+                    <span class="font-black text-xs sm:text-sm">📚 100% Hoàn thành BTVN</span>
+                    <span class="font-black text-sm">+25 ⭐</span>
+                </button>
+                <button onclick="rewardEntireClass(50, 'Thưởng Nóng: Tất cả các quán tăng 1 Cấp!')" class="p-3 rounded-full bg-gradient-to-r from-amber-300 to-yellow-400 border-2 border-[#1e3a5f] text-[#1e3a5f] flex items-center justify-between font-black">
+                    <span class="text-xs sm:text-sm">🚀 Tất cả +1 Cấp Ngay!</span>
+                    <span class="text-sm">+50 ⭐</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7D. Confirm Empty Land Reset Modal -->
+    <div id="emptyConfirmModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3">
+        <div class="glass-card w-full max-w-md p-5 text-center relative">
+            <div class="text-4xl mb-2">🌱🏡</div>
+            <h3 class="font-black text-lg text-[#1e3a5f]">ĐẶT TẤT CẢ 16 Ô VỀ NỀN ĐẤT TRỐNG?</h3>
+            <p class="text-xs font-bold text-slate-600 my-2">
+                Toàn bộ 16 ô nhà sẽ trở về <b>Nền Cỏ Trống (Cấp 0)</b> có hàng rào gỗ để từng bạn học sinh tự chọn loại hàng quán (Cafe, Pet Shop, Bakery, Tiệm Sách...) và đặt tên bảng hiệu từ đầu.
+            </p>
+            <div class="flex gap-2 justify-center mt-4">
+                <button onclick="closeModal('emptyConfirmModal')" class="pill-btn bg-slate-200 text-slate-700 font-black px-4 py-2 rounded-xl text-xs">Hủy</button>
+                <button onclick="resetAllPlotsToEmptyLand()" class="pill-btn bg-emerald-500 text-white font-black px-5 py-2 rounded-xl text-xs">🌱 Đồng Ý Về Đất Trống</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 8. FLOATING TOAST BANNER ==================== -->
+    <div id="toastBanner" class="pointer-events-none fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 -translate-y-4">
+        <div class="bg-white border-3 border-[#1e3a5f] rounded-2xl px-5 py-2.5 shadow-2xl flex items-center gap-3">
+            <span id="toastIcon" class="text-3xl">🎉</span>
+            <div>
+                <div id="toastTitle" class="font-black text-sm sm:text-base text-[#1e3a5f]">CHÚC MỪNG!</div>
+                <div id="toastSub" class="font-bold text-xs text-emerald-700">+10 Điểm Thưởng</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /********************************************************************
+     * 1. WEB AUDIO SYNTHESIZER (CHEERFUL CLASSROOM SOUND EFFECTS)
+     ********************************************************************/
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function ensureAudio() {
+        if (!audioCtx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSFX(type) {
+        if (!soundEnabled) return;
+        try {
+            ensureAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'point') {
+                const notes = [587.33, 880, 1174.66];
+                notes.forEach((f, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'triangle';
+                    o.frequency.setValueAtTime(f, now + i * 0.055);
+                    g.gain.setValueAtTime(0.16, now + i * 0.055);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.055 + 0.22);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(now + i * 0.055); o.stop(now + i * 0.055 + 0.22);
+                });
+            } else if (type === 'levelup') {
+                const melody = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+                melody.forEach((f, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'triangle';
+                    o.frequency.setValueAtTime(f, now + i * 0.075);
+                    g.gain.setValueAtTime(0.2, now + i * 0.075);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.075 + 0.3);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(now + i * 0.075); o.stop(now + i * 0.075 + 0.3);
+                });
+            } else if (type === 'click') {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(520, now);
+                o.frequency.exponentialRampToValueAtTime(780, now + 0.06);
+                g.gain.setValueAtTime(0.1, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(now); o.stop(now + 0.07);
+            }
+        } catch (e) {}
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 Âm thanh' : '🔇 Tắt tiếng';
+        if (soundEnabled) playSFX('click');
+    }
+
+    /********************************************************************
+     * 2. CATALOGS: 8 SHOP TYPES, 6 PASTEL PALETTES, 10 DORAEMON LOGOS,
+     *    6 DECORATION PACKS & 20 LEVELS OF EVOLUTION (50 PTS / LEVEL)
+     ********************************************************************/
+    const MAX_LEVEL = 20;
+    const POINTS_PER_LEVEL = 50; // Every 50 points increases shop level by +1 (Lv.1 at 0-49, Lv.20 at 950+)
+
+    const SHOP_TYPES = {
+        cafe:    { id: 'cafe',    name: 'Quán Cafe & Trà Sữa',     eng: 'Cafe & Tea',    icon: '☕', defaultColor: 'dorami_gold' },
+        pet:     { id: 'pet',     name: 'Cửa Hàng Thú Cưng',       eng: 'Pet Shop',      icon: '🐾', defaultColor: 'lavender' },
+        bakery:  { id: 'bakery',  name: 'Tiệm Bánh Dorayaki',      eng: 'Bakery',        icon: '🥞', defaultColor: 'mint' },
+        fruit:   { id: 'fruit',   name: 'Cửa Hàng Trái Cây & Ăn',  eng: 'Fruit Shop',    icon: '🍊', defaultColor: 'peach' },
+        flower:  { id: 'flower',  name: 'Tiệm Hoa Tươi',           eng: 'Flower Shop',   icon: '🌸', defaultColor: 'coral' },
+        book:    { id: 'book',    name: 'Tiệm Sách & Văn Phòng',   eng: 'Bookstore',     icon: '📚', defaultColor: 'dora_blue' },
+        toy:     { id: 'toy',     name: 'Tiệm Đồ Chơi Bảo Bối',    eng: 'Gadget Shop',   icon: '🧸', defaultColor: 'dora_blue' },
+        fashion: { id: 'fashion', name: 'Shop Thời Trang',         eng: 'Boutique',      icon: '👗', defaultColor: 'lavender' }
+    };
+
+    // 6 Pastel Color Palettes matching "Our Little Town" screenshot
+    const PASTEL_PALETTES = {
+        lavender: {
+            id: 'lavender', name: 'Tím Lavender (Pet Shop)',
+            wallLeft: '#c084fc', wallRight: '#a855f7', wallTop: '#e9d5ff',
+            roofTop: '#9333ea', awningA: '#a855f7', awningB: '#ffffff',
+            trim: '#f3e8ff', door: '#7e22ce'
+        },
+        mint: {
+            id: 'mint', name: 'Xanh Mint (Bakery)',
+            wallLeft: '#fde68a', wallRight: '#fcd34d', wallTop: '#fef9c3',
+            roofTop: '#34d399', awningA: '#10b981', awningB: '#ffffff',
+            trim: '#a7f3d0', door: '#059669'
+        },
+        peach: {
+            id: 'peach', name: 'Cam Đào (Fruit Shop)',
+            wallLeft: '#fdba74', wallRight: '#fb923c', wallTop: '#ffedd5',
+            roofTop: '#22c55e', awningA: '#16a34a', awningB: '#ffffff',
+            trim: '#fed7aa', door: '#ea580c'
+        },
+        coral: {
+            id: 'coral', name: 'Hồng Coral (Flower Shop)',
+            wallLeft: '#fda4af', wallRight: '#fb7185', wallTop: '#ffe4e6',
+            roofTop: '#f43f5e', awningA: '#e11d48', awningB: '#ffffff',
+            trim: '#fecdd3', door: '#be123c'
+        },
+        dora_blue: {
+            id: 'dora_blue', name: 'Xanh Doraemon',
+            wallLeft: '#7dd3fc', wallRight: '#38bdf8', wallTop: '#e0f2fe',
+            roofTop: '#0284c7', awningA: '#2563eb', awningB: '#ffffff',
+            trim: '#bae6fd', door: '#ef4444'
+        },
+        dorami_gold: {
+            id: 'dorami_gold', name: 'Vàng Kem Dorami',
+            wallLeft: '#fde047', wallRight: '#facc15', wallTop: '#fef9c3',
+            roofTop: '#f43f5e', awningA: '#ef4444', awningB: '#fef08a',
+            trim: '#fef08a', door: '#d97706'
+        }
+    };
+
+    // 10 Customizable Doraemon Logos
+    const DORAEMON_LOGOS = [
+        { id: 'doraemon',    name: 'Mặt Mèo Doraemon',   emoji: '🐱' },
+        { id: 'dorami',      name: 'Mặt Dorami Nơ Đỏ',   emoji: '🎀' },
+        { id: 'bell',        name: 'Chuông Vàng Bảo Bối', emoji: '🔔' },
+        { id: 'copter',      name: 'Chong Chóng Tre',     emoji: '🚁' },
+        { id: 'door',        name: 'Cánh Cửa Thần Kỳ',    emoji: '🚪' },
+        { id: 'dorayaki',    name: 'Bánh Rán Dorayaki',   emoji: '🥞' },
+        { id: 'bread',       name: 'Bánh Mì Điểm A+',     emoji: '🍞' },
+        { id: 'glasses',     name: 'Kính Nobita & Sao',   emoji: '👓' },
+        { id: 'crown',       name: 'Vương Miện Doraemon', emoji: '👑' },
+        { id: 'timemachine', name: 'Cỗ Máy Thời Gian',    emoji: '🛸' }
+    ];
+
+    // 6 Toggleable Outdoor Decoration Packs
+    const DECORATION_PACKS = [
+        { id: 'menu_lantern',   name: 'Bảng Phấn Menu & Đèn Lồng', icon: '🪧', unlockLv: 1 },
+        { id: 'patio_umbrella', name: 'Bàn Ghế & Dù Che Nắng',     icon: '⛱️', unlockLv: 2 },
+        { id: 'sakura_garden',  name: 'Cây Anh Đào & Bồn Hoa',     icon: '🌸', unlockLv: 5 },
+        { id: 'mascot_balloon', name: 'Bóng Bay & Tượng Doraemon', icon: '🎈', unlockLv: 9 },
+        { id: 'fountain_neon',  name: 'Đài Phun Nước Sân Trước',   icon: '⛲', unlockLv: 13 },
+        { id: 'anywhere_drone', name: 'Cửa Thần Kỳ & Drone Bay',   icon: '🚁', unlockLv: 17 }
+    ];
+
+    function getStageName(lv) {
+        if (lv <= 0) return 'Nền Đất Trống';
+        if (lv <= 3) return 'Quán Nhỏ Sơ Khai (1 Tầng)';
+        if (lv <= 7) return 'Cửa Hàng Sân Vườn (1.5 Tầng)';
+        if (lv <= 11) return 'Nhà Phố Pastel (2 Tầng)';
+        if (lv <= 15) return 'Trung Tâm Doraemon Plaza (3 Tầng)';
+        if (lv <= 19) return 'Đại Siêu Thị Cao Cấp (4 Tầng)';
+        return '👑 SIÊU CỬA HÀNG THẾ KỶ 22 (MAX LV.20)';
+    }
+
+    /********************************************************************
+     * 3. STATE MANAGEMENT & 16 PLOTS (#1 - #16)
+     ********************************************************************/
+    const STORAGE_KEY = 'DORAEMON_PASTEL_TOWN_V5';
+    let classTitle = "MS MINDY'S STUDENTS • DORAEMON PASTEL TOWN";
+    let plots = [];
+    let selectedPlotId = 1;
+    let hoveredPlotId = null;
+    let activeInspectorTab = 'award';
+    let randomPickedPlotId = null;
+
+    // 4x4 Grid Coordinates for 16 Plots with wide avenues in between
+    const PLOT_COORDS = [
+        { id: 1,  gx: 0, gy: 0 }, { id: 2,  gx: 1, gy: 0 }, { id: 3,  gx: 2, gy: 0 }, { id: 4,  gx: 3, gy: 0 },
+        { id: 5,  gx: 0, gy: 1 }, { id: 6,  gx: 1, gy: 1 }, { id: 7,  gx: 2, gy: 1 }, { id: 8,  gx: 3, gy: 1 },
+        { id: 9,  gx: 0, gy: 2 }, { id: 10, gx: 1, gy: 2 }, { id: 11, gx: 2, gy: 2 }, { id: 12, gx: 3, gy: 2 },
+        { id: 13, gx: 0, gy: 3 }, { id: 14, gx: 1, gy: 3 }, { id: 15, gx: 2, gy: 3 }, { id: 16, gx: 3, gy: 3 }
+    ];
+
+    function createSamplePastelTown() {
+        const samplePresets = [
+            { id: 1,  student: 'Minh Anh',   shopType: 'bakery',  color: 'mint',        logo: 'doraemon',    shopName: 'Bakery',       level: 9,  points: 420 },
+            { id: 2,  student: 'Bảo Nam',    shopType: 'bakery',  color: 'mint',        logo: 'dorayaki',    shopName: 'Dorayaki',     level: 12, points: 580 },
+            { id: 3,  student: 'Hà Vy',      shopType: 'cafe',    color: 'dora_blue',   logo: 'bell',        shopName: 'Dora Cafe',    level: 15, points: 720 },
+            { id: 4,  student: 'Tuấn Kiệt',  shopType: 'toy',     color: 'dorami_gold', logo: 'crown',       shopName: 'Mega Mall',    level: 20, points: 1000 },
+            { id: 5,  student: 'Khánh Linh', shopType: 'bakery',  color: 'mint',        logo: 'dorami',      shopName: 'Sweet Bakery', level: 8,  points: 375 },
+            { id: 6,  student: 'Gia Huy',    shopType: 'pet',     color: 'lavender',    logo: 'doraemon',    shopName: 'Pet Shop',     level: 10, points: 465 },
+            { id: 7,  student: 'Thảo Nhi',   shopType: 'flower',  color: 'coral',       logo: 'door',        shopName: 'Flower Shop',  level: 9,  points: 410 },
+            { id: 8,  student: 'Hoàng Long', shopType: 'book',    color: 'dora_blue',   logo: 'bread',       shopName: 'Bookstore',    level: 14, points: 670 },
+            { id: 9,  student: 'Phương Thảo',shopType: 'pet',     color: 'lavender',    logo: 'copter',      shopName: 'Pet Shop',     level: 11, points: 515 },
+            { id: 10, student: 'Đức Phúc',   shopType: 'fruit',   color: 'peach',       logo: 'dorayaki',    shopName: 'Fruit Shop',   level: 10, points: 480 },
+            { id: 11, student: 'Ngọc Hân',   shopType: 'fashion', color: 'coral',       logo: 'dorami',      shopName: 'Boutique',     level: 6,  points: 260 },
+            { id: 12, student: 'Quốc Bảo',   shopType: 'cafe',    color: 'dorami_gold', logo: 'timemachine', shopName: 'Future Cafe',  level: 18, points: 890 },
+            { id: 13, student: 'Ánh Dương',  shopType: 'cafe',    color: 'mint',        logo: 'glasses',     shopName: 'Garden Tea',   level: 3,  points: 110 },
+            { id: 14, student: 'Hải Đăng',   shopType: 'toy',     color: 'dora_blue',   logo: 'doraemon',    shopName: 'Gadget Shop',  level: 2,  points: 65 },
+            { id: 15, student: 'Lan Hương',  shopType: null,      color: 'lavender',    logo: 'doraemon',    shopName: 'Ô Trống #15',  level: 0,  points: 0 },
+            { id: 16, student: 'Thành Đạt',  shopType: null,      color: 'mint',        logo: 'dorami',      shopName: 'Ô Trống #16',  level: 0,  points: 0 }
+        ];
+
+        return PLOT_COORDS.map((coord, i) => {
+            const p = samplePresets[i];
+            return {
+                id: coord.id,
+                gx: coord.gx,
+                gy: coord.gy,
+                studentName: p.student,
+                shopType: p.shopType,
+                colorKey: p.color,
+                logoId: p.logo,
+                shopName: p.shopName,
+                level: p.level,
+                points: p.points,
+                customDecos: null // null means auto-unlock by level
+            };
+        });
+    }
+
+    function createEmptyLandPlots() {
+        const defaultStudents = [
+            'Minh Anh', 'Bảo Nam', 'Hà Vy', 'Tuấn Kiệt',
+            'Khánh Linh', 'Gia Huy', 'Thảo Nhi', 'Hoàng Long',
+            'Phương Thảo', 'Đức Phúc', 'Ngọc Hân', 'Quốc Bảo',
+            'Ánh Dương', 'Hải Đăng', 'Lan Hương', 'Thành Đạt'
+        ];
+        const logoKeys = DORAEMON_LOGOS.map(l => l.id);
+        const colorKeys = Object.keys(PASTEL_PALETTES);
+
+        return PLOT_COORDS.map((coord, i) => ({
+            id: coord.id,
+            gx: coord.gx,
+            gy: coord.gy,
+            studentName: defaultStudents[i],
+            shopType: null, // Empty grass plot waiting for student to pick!
+            colorKey: colorKeys[i % colorKeys.length],
+            logoId: logoKeys[i % logoKeys.length],
+            shopName: `Quán của ${defaultStudents[i]}`,
+            level: 0,
+            points: 0,
+            customDecos: null
+        }));
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const data = JSON.parse(raw);
+                if (data && Array.isArray(data.plots) && data.plots.length === 16) {
+                    plots = data.plots;
+                    if (data.classTitle) {
+                        classTitle = data.classTitle;
+                        document.getElementById('classTitleInput').value = classTitle;
+                    }
+                    return;
+                }
+            }
+        } catch (e) {}
+        plots = createSamplePastelTown();
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                classTitle,
+                plots
+            }));
+        } catch (e) {}
+        updateTopSummary();
+        renderLeftDirectory();
+    }
+
+    function saveClassTitle(val) {
+        classTitle = val.trim() || "MS MINDY'S STUDENTS";
+        saveState();
+    }
+
+    function getActiveDecos(plot) {
+        if (Array.isArray(plot.customDecos)) return new Set(plot.customDecos);
+        const set = new Set();
+        DECORATION_PACKS.forEach(pk => {
+            if (plot.level >= pk.unlockLv) set.add(pk.id);
+        });
+        return set;
+    }
+
+    /********************************************************************
+     * 4. HIGH-DPI ISOMETRIC ENGINE & 100% RELIABLE PAN / ZOOM CAMERA
+     ********************************************************************/
+    const canvas = document.getElementById('townCanvas');
+    const ctx = canvas.getContext('2d');
+    let dpr = window.devicePixelRatio || 1;
+
+    // Spacious tile step so streets, sidewalks, crosswalks, and street lamps fit between plots
+    const STEP_X = 240;
+    const STEP_Y = 124;
+    const PLOT_TILE_W = 176;
+    const PLOT_TILE_H = 90;
+
+    let camera = {
+        x: 0,
+        y: -150,
+        zoom: 0.92,
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+        camStartX: 0,
+        camStartY: 0,
+        movedDist: 0
+    };
+
+    let animTick = 0;
+    let particles = [];
+    let floatingTexts = [];
+    let walkers = [];
+
+    function initWalkers() {
+        walkers = [
+            { id: 'doraemon', name: 'Doraemon', gx: 0.5, gy: 0.5, tx: 2.5, ty: 0.5, speed: 0.0055, flying: false, msg: 'Let’s build Lv.20 Mega Shops!' },
+            { id: 'nobita',   name: 'Nobita',   gx: 1.5, gy: 1.5, tx: 1.5, ty: 2.5, speed: 0.0065, flying: true,  msg: 'Teacher, give me +10 points!' },
+            { id: 'shizuka',  name: 'Shizuka',  gx: 2.5, gy: 1.5, tx: 0.5, ty: 1.5, speed: 0.005,  flying: false, msg: 'Pastel Town looks so cute! 🌸' },
+            { id: 'dorami',   name: 'Dorami',   gx: 1.5, gy: 0.5, tx: 1.5, ty: 2.5, speed: 0.006,  flying: true,  msg: 'Melon bread & Dorayaki! 🥞' },
+            { id: 'suneo',    name: 'Suneo',    gx: 0.5, gy: 2.5, tx: 2.5, ty: 2.5, speed: 0.0055, flying: false, msg: 'My shop has a golden logo!' }
+        ];
+    }
+
+    function gridToScreen(gx, gy) {
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+        const isoX = (gx - gy) * (STEP_X / 2);
+        const isoY = (gx + gy) * (STEP_Y / 2);
+        return {
+            x: w / 2 + (isoX + camera.x) * camera.zoom,
+            y: h / 2 + (isoY + camera.y) * camera.zoom
+        };
+    }
+
+    function resizeCanvas() {
+        dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function resetCamera() {
+        camera.x = -40;
+        camera.y = -155;
+        camera.zoom = window.innerWidth < 768 ? 0.65 : 0.92;
+        playSFX('click');
+    }
+
+    function panCameraBy(dx, dy) {
+        camera.x += dx / camera.zoom;
+        camera.y += dy / camera.zoom;
+    }
+
+    function zoomCameraBy(factor) {
+        camera.zoom = Math.max(0.45, Math.min(1.85, camera.zoom * factor));
+        playSFX('click');
+    }
+
+    function focusCameraOnPlot(plotId) {
+        const p = plots.find(x => x.id === plotId);
+        if (!p) return;
+        const isoX = (p.gx - p.gy) * (STEP_X / 2);
+        const isoY = (p.gx + p.gy) * (STEP_Y / 2);
+        camera.x = -isoX - (window.innerWidth > 900 ? 90 : 0);
+        camera.y = -isoY + 45;
+        camera.zoom = Math.max(camera.zoom, 1.05);
+        playSFX('click');
+    }
+
+    // Unified Pointer & Touch Drag + Click Detection on Canvas
+    let pinchStartDist = null;
+    let pinchStartZoom = 1;
+
+    canvas.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        camera.isDragging = true;
+        camera.startX = e.clientX;
+        camera.startY = e.clientY;
+        camera.camStartX = camera.x;
+        camera.camStartY = camera.y;
+        camera.movedDist = 0;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (camera.isDragging) {
+            const dx = e.clientX - camera.startX;
+            const dy = e.clientY - camera.startY;
+            camera.movedDist = Math.hypot(dx, dy);
+            camera.x = camera.camStartX + dx / camera.zoom;
+            camera.y = camera.camStartY + dy / camera.zoom;
+        } else {
+            updateHoveredPlot(e.clientX, e.clientY);
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (!camera.isDragging) return;
+        camera.isDragging = false;
+        if (camera.movedDist < 7) {
+            handleCanvasClick(e.clientX, e.clientY);
+        }
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.1 : 0.9;
+        camera.zoom = Math.max(0.45, Math.min(1.85, camera.zoom * factor));
+    }, { passive: false });
+
+    // Touch Events for Interactive Classroom Smartboards & Tablets
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            const t = e.touches[0];
+            camera.isDragging = true;
+            camera.startX = t.clientX;
+            camera.startY = t.clientY;
+            camera.camStartX = camera.x;
+            camera.camStartY = camera.y;
+            camera.movedDist = 0;
+        } else if (e.touches.length === 2) {
+            camera.isDragging = false;
+            pinchStartDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            pinchStartZoom = camera.zoom;
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && camera.isDragging) {
+            const t = e.touches[0];
+            const dx = t.clientX - camera.startX;
+            const dy = t.clientY - camera.startY;
+            camera.movedDist = Math.hypot(dx, dy);
+            camera.x = camera.camStartX + dx / camera.zoom;
+            camera.y = camera.camStartY + dy / camera.zoom;
+        } else if (e.touches.length === 2 && pinchStartDist) {
+            const dist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            camera.zoom = Math.max(0.45, Math.min(1.85, pinchStartZoom * (dist / pinchStartDist)));
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', (e) => {
+        if (camera.isDragging && camera.movedDist < 9 && e.changedTouches.length > 0) {
+            const t = e.changedTouches[0];
+            handleCanvasClick(t.clientX, t.clientY);
+        }
+        camera.isDragging = false;
+        pinchStartDist = null;
+    });
+
+    // Keyboard Arrow / WASD Support
+    window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') panCameraBy(0, 55);
+        if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') panCameraBy(0, -55);
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') panCameraBy(55, 0);
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') panCameraBy(-55, 0);
+    });
+
+    function findPlotAtScreenPos(sx, sy) {
+        // Check from front-most to back-most building bounding box
+        const sorted = [...plots].sort((a, b) => (b.gx + b.gy) - (a.gx + a.gy));
+        for (const p of sorted) {
+            const center = gridToScreen(p.gx, p.gy);
+            const stories = p.level <= 0 ? 0 : Math.min(5, Math.ceil(p.level / 4));
+            const topExtent = (45 + stories * 36) * camera.zoom;
+            const halfW = 78 * camera.zoom;
+            const bottomExtent = 48 * camera.zoom;
+
+            if (
+                sx >= center.x - halfW &&
+                sx <= center.x + halfW &&
+                sy >= center.y - topExtent &&
+                sy <= center.y + bottomExtent
+            ) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    function updateHoveredPlot(sx, sy) {
+        const hit = findPlotAtScreenPos(sx, sy);
+        hoveredPlotId = hit ? hit.id : null;
+        canvas.style.cursor = hit ? 'pointer' : (camera.isDragging ? 'grabbing' : 'grab');
+    }
+
+    function handleCanvasClick(sx, sy) {
+        const hit = findPlotAtScreenPos(sx, sy);
+        if (hit) {
+            selectPlot(hit.id);
+        }
+    }
+
+    /********************************************************************
+     * 5. 3D ISOMETRIC PASTEL DRAWING PRIMITIVES & DORAEMON LOGOS
+     ********************************************************************/
+    function drawDiamondAt(cx, cy, w, h, fill, stroke = '#334155', lineW = 1.8) {
+        const z = camera.zoom;
+        const hw = (w / 2) * z;
+        const hh = (h / 2) * z;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - hh);
+        ctx.lineTo(cx + hw, cy);
+        ctx.lineTo(cx, cy + hh);
+        ctx.lineTo(cx - hw, cy);
+        ctx.closePath();
+        if (fill) {
+            ctx.fillStyle = fill;
+            ctx.fill();
+        }
+        if (stroke) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = lineW * z;
+            ctx.stroke();
+        }
+    }
+
+    // Extrudes a 3D Isometric Prism centered horizontally at (cx, baseCy)
+    function drawPrismAt(cx, baseCy, w, d, hPx, topCol, leftCol, rightCol, strokeCol = '#1e3a5f') {
+        const z = camera.zoom;
+        const hw = (w / 2) * z;
+        const hd = (d / 2) * z;
+        const h  = hPx * z;
+
+        // Bottom diamond vertices: Top(N), Right(E), Bottom(S), Left(W)
+        const bN = { x: cx,      y: baseCy - hd };
+        const bE = { x: cx + hw, y: baseCy };
+        const bS = { x: cx,      y: baseCy + hd };
+        const bW = { x: cx - hw, y: baseCy };
+
+        // Top diamond vertices
+        const tN = { x: bN.x, y: bN.y - h };
+        const tE = { x: bE.x, y: bE.y - h };
+        const tS = { x: bS.x, y: bS.y - h };
+        const tW = { x: bW.x, y: bW.y - h };
+
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = strokeCol;
+        ctx.lineWidth = Math.max(1.2, 2.0 * z);
+
+        // Left Face (W -> S)
+        ctx.beginPath();
+        ctx.moveTo(tW.x, tW.y);
+        ctx.lineTo(tS.x, tS.y);
+        ctx.lineTo(bS.x, bS.y);
+        ctx.lineTo(bW.x, bW.y);
+        ctx.closePath();
+        ctx.fillStyle = leftCol;
+        ctx.fill();
+        ctx.stroke();
+
+        // Right Face (S -> E)
+        ctx.beginPath();
+        ctx.moveTo(tS.x, tS.y);
+        ctx.lineTo(tE.x, tE.y);
+        ctx.lineTo(bE.x, bE.y);
+        ctx.lineTo(bS.x, bS.y);
+        ctx.closePath();
+        ctx.fillStyle = rightCol;
+        ctx.fill();
+        ctx.stroke();
+
+        // Top Face
+        ctx.beginPath();
+        ctx.moveTo(tN.x, tN.y);
+        ctx.lineTo(tE.x, tE.y);
+        ctx.lineTo(tS.x, tS.y);
+        ctx.lineTo(tW.x, tW.y);
+        ctx.closePath();
+        ctx.fillStyle = topCol;
+        ctx.fill();
+        ctx.stroke();
+
+        return { bN, bE, bS, bW, tN, tE, tS, tW };
+    }
+
+    // Draws "Our Little Town" White Grid Window (田) on an isometric wall
+    function drawIsoWindow(x, y, w, h, skewY) {
+        const z = camera.zoom;
+        const ww = w * z;
+        const wh = h * z;
+        const sk = skewY * z;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x - ww / 2, y - sk / 2);
+        ctx.lineTo(x + ww / 2, y + sk / 2);
+        ctx.lineTo(x + ww / 2, y + sk / 2 + wh);
+        ctx.lineTo(x - ww / 2, y - sk / 2 + wh);
+        ctx.closePath();
+        ctx.fillStyle = '#e0f2fe';
+        ctx.fill();
+        ctx.lineWidth = 2.2 * z;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        // Inner window crossbars (田)
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + wh);
+        ctx.moveTo(x - ww / 2, y - sk / 2 + wh / 2);
+        ctx.lineTo(x + ww / 2, y + sk / 2 + wh / 2);
+        ctx.lineWidth = 1.6 * z;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // Draws Striped 3D Shopfront Awning on the Right-Front Face (S -> E)
+    function drawStripedAwningRightFace(tS, tE, stripes = 5, colA = '#a855f7', colB = '#ffffff') {
+        const z = camera.zoom;
+        const outX = 11 * z;
+        const outY = 14 * z;
+
+        for (let i = 0; i < stripes; i++) {
+            const f0 = i / stripes;
+            const f1 = (i + 1) / stripes;
+            const x0 = tS.x + (tE.x - tS.x) * f0;
+            const y0 = tS.y + (tE.y - tS.y) * f0;
+            const x1 = tS.x + (tE.x - tS.x) * f1;
+            const y1 = tS.y + (tE.y - tS.y) * f1;
+
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.lineTo(x1 + outX, y1 + outY);
+            ctx.lineTo(x0 + outX, y0 + outY);
+            ctx.closePath();
+            ctx.fillStyle = i % 2 === 0 ? colA : colB;
+            ctx.fill();
+            ctx.lineWidth = 1.2 * z;
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.stroke();
+        }
+    }
+
+    // Draws 10 Custom Doraemon 3D Emblem Logos on Canvas
+    function drawDoraemonLogoCanvas(cx, cy, r, logoId) {
+        const z = camera.zoom;
+        ctx.save();
+
+        // Outer circular emblem plate
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 1.15, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 2.2 * z;
+        ctx.strokeStyle = '#1e3a5f';
+        ctx.stroke();
+
+        if (logoId === 'doraemon') {
+            // Classic Doraemon Face
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#1d9bf0';
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.14, r * 0.78, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.stroke();
+
+            // Eyes
+            ctx.beginPath();
+            ctx.ellipse(cx - r * 0.22, cy - r * 0.2, r * 0.2, r * 0.26, 0, 0, Math.PI * 2);
+            ctx.ellipse(cx + r * 0.22, cy - r * 0.2, r * 0.2, r * 0.26, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx - r * 0.15, cy - r * 0.2, r * 0.08, 0, Math.PI * 2);
+            ctx.arc(cx + r * 0.15, cy - r * 0.2, r * 0.08, 0, Math.PI * 2);
+            ctx.fillStyle = '#1e3a5f';
+            ctx.fill();
+
+            // Red Nose
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.03, r * 0.17, 0, Math.PI * 2);
+            ctx.fillStyle = '#ef4444';
+            ctx.fill();
+            ctx.stroke();
+
+            // Smile
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.18, r * 0.4, 0.15 * Math.PI, 0.85 * Math.PI);
+            ctx.stroke();
+        } else if (logoId === 'dorami') {
+            // Red Ear Bow at Top
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - r * 0.95);
+            ctx.lineTo(cx - r * 0.65, cy - r * 1.35);
+            ctx.lineTo(cx - r * 0.5, cy - r * 0.75);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - r * 0.95);
+            ctx.lineTo(cx + r * 0.65, cy - r * 1.35);
+            ctx.lineTo(cx + r * 0.5, cy - r * 0.75);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            // Yellow Head
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#facc15';
+            ctx.fill(); ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.14, r * 0.76, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill(); ctx.stroke();
+
+            // Eyes & Pink Nose
+            ctx.beginPath();
+            ctx.arc(cx - r * 0.22, cy - r * 0.16, r * 0.12, 0, Math.PI * 2);
+            ctx.arc(cx + r * 0.22, cy - r * 0.16, r * 0.12, 0, Math.PI * 2);
+            ctx.fillStyle = '#1e3a5f';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.04, r * 0.14, 0, Math.PI * 2);
+            ctx.fillStyle = '#f43f5e';
+            ctx.fill();
+        } else if (logoId === 'bell') {
+            // Golden Doraemon Cat Bell
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.88, 0, Math.PI * 2);
+            ctx.fillStyle = '#facc15';
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(cx - r * 0.85, cy - r * 0.15, r * 1.7, r * 0.26);
+            ctx.strokeRect(cx - r * 0.85, cy - r * 0.15, r * 1.7, r * 0.26);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy + r * 0.35, r * 0.18, 0, Math.PI * 2);
+            ctx.fillStyle = '#78350f';
+            ctx.fill();
+        } else if (logoId === 'copter') {
+            // Spinning Bamboo Copter
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.9, 0, Math.PI * 2);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fill(); ctx.stroke();
+
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 3 * z;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + r * 0.5);
+            ctx.lineTo(cx, cy - r * 0.35);
+            ctx.stroke();
+
+            const span = Math.cos(animTick * 0.35) * r * 0.85;
+            ctx.beginPath();
+            ctx.moveTo(cx - span, cy - r * 0.35);
+            ctx.lineTo(cx + span, cy - r * 0.35);
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 4 * z;
+            ctx.stroke();
+        } else {
+            // Emoji + Styled Badge for remaining gadgets (Anywhere Door, Dorayaki, Memory Bread, Glasses, Crown, Time Machine)
+            const logoObj = DORAEMON_LOGOS.find(l => l.id === logoId) || DORAEMON_LOGOS[0];
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.92, 0, Math.PI * 2);
+            ctx.fillStyle = '#fef3c7';
+            ctx.fill(); ctx.stroke();
+
+            ctx.font = `${Math.round(r * 1.25)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(logoObj.emoji, cx, cy + r * 0.06);
+        }
+
+        ctx.restore();
+    }
+
+    /********************************************************************
+     * 6. DRAW EACH PLOT: EMPTY GRASS OR PASTEL 3D BUILDING (LV.1 ➔ LV.20)
+     ********************************************************************/
+    function drawPlotAndBuilding(plot) {
+        const center = gridToScreen(plot.gx, plot.gy);
+        const cx = center.x;
+        const cy = center.y;
+        const z = camera.zoom;
+        const isSelected = (plot.id === selectedPlotId);
+        const isHovered  = (plot.id === hoveredPlotId);
+
+        // 1. Base Plot Sidewalk & Grass Pad
+        drawDiamondAt(
+            cx, cy,
+            PLOT_TILE_W + 14, PLOT_TILE_H + 8,
+            isSelected ? '#fde047' : (isHovered ? '#bae6fd' : '#e2e8f0'),
+            isSelected ? '#d97706' : '#94a3b8',
+            isSelected ? 3 : 1.5
+        );
+
+        // CASE A: LEVEL 0 -> EMPTY GRASS LAND WITH WOODEN FENCE (FOR STUDENTS TO PICK & BUILD)
+        if (!plot.shopType || plot.level <= 0) {
+            drawDiamondAt(cx, cy, PLOT_TILE_W - 6, PLOT_TILE_H - 4, '#86efac', '#22c55e', 2);
+
+            // Little wooden corner fence posts
+            const posts = [
+                { dx: 0, dy: -36 }, { dx: 68, dy: 0 }, { dx: 0, dy: 36 }, { dx: -68, dy: 0 }
+            ];
+            posts.forEach(pt => {
+                ctx.fillStyle = '#b45309';
+                ctx.strokeStyle = '#1e3a5f';
+                ctx.lineWidth = 1.5 * z;
+                ctx.fillRect(cx + pt.dx * z - 3 * z, cy + pt.dy * z - 12 * z, 6 * z, 12 * z);
+                ctx.strokeRect(cx + pt.dx * z - 3 * z, cy + pt.dy * z - 12 * z, 6 * z, 12 * z);
+            });
+
+            // Plot Number Circle Badge & Student Name on Empty Plot
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy - 16 * z, 14 * z, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.lineWidth = 2.5 * z;
+            ctx.strokeStyle = '#15803d';
+            ctx.stroke();
+
+            ctx.font = `900 ${Math.round(12 * z)}px Nunito, sans-serif`;
+            ctx.fillStyle = '#15803d';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${plot.id}`, cx, cy - 15.5 * z);
+
+            // Student Name & "+ Bấm xây quán"
+            ctx.font = `900 ${Math.round(10.5 * z)}px Nunito, sans-serif`;
+            ctx.fillStyle = '#1e3a5f';
+            ctx.fillText(`👤 ${plot.studentName}`, cx, cy + 5 * z);
+
+            ctx.font = `800 ${Math.round(9.5 * z)}px Nunito, sans-serif`;
+            ctx.fillStyle = '#15803d';
+            ctx.fillText(`➕ Bấm chọn quán xây`, cx, cy + 19 * z);
+            ctx.restore();
+            return;
+        }
+
+        // CASE B: BUILT PASTEL 3D SHOP (LEVEL 1 TO LEVEL 20)
+        const pal = PASTEL_PALETTES[plot.colorKey] || PASTEL_PALETTES.lavender;
+        const lv = Math.max(1, Math.min(MAX_LEVEL, plot.level));
+        const activeDecos = getActiveDecos(plot);
+
+        // Warm checkered patio floor (matching "Our Little Town" screenshot!)
+        drawDiamondAt(cx, cy, PLOT_TILE_W - 4, PLOT_TILE_H - 2, '#fef3c7', '#f59e0b', 1.8);
+        drawDiamondAt(cx, cy, PLOT_TILE_W - 22, PLOT_TILE_H - 11, '#fde68a', null, 0);
+
+        // Rainbow Aura under Lv.20 Mega Mall
+        if (lv === 20) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 86 * z, 44 * z, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = `hsl(${(animTick * 3) % 360}, 90%, 60%)`;
+            ctx.lineWidth = 4 * z;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Determine number of 3D Pastel Stories based on Level (Lv.1-3: 1 story, Lv.4-7: 1 tall story, Lv.8-11: 2 stories, Lv.12-15: 3 stories, Lv.16-19: 4 stories, Lv.20: 5 stories)
+        let numStories = 1;
+        if (lv >= 8 && lv <= 11) numStories = 2;
+        else if (lv >= 12 && lv <= 15) numStories = 3;
+        else if (lv >= 16 && lv <= 19) numStories = 4;
+        else if (lv === 20) numStories = 5;
+
+        const baseW = 108;
+        const baseD = 56;
+        const storyH = (lv <= 3) ? 32 : 38;
+
+        // Offset building slightly toward back-left of plot so front-right patio has room for tables & awnings
+        const bCx = cx - 8 * z;
+        const bCy = cy - 6 * z;
+
+        let currentZ = 0;
+        let topFaceRef = null;
+        let firstFloorRef = null;
+
+        for (let s = 0; s < numStories; s++) {
+            const shrink = s > 0 ? Math.min(s * 4, 14) : 0;
+            const w = baseW - shrink;
+            const d = baseD - shrink * 0.5;
+            const h = s === 0 ? storyH + 4 : storyH;
+
+            // Cornice trim ledge between floors
+            if (s > 0) {
+                drawPrismAt(bCx, bCy - currentZ * z, w + 6, d + 3, 5, '#ffffff', '#f8fafc', '#e2e8f0');
+                currentZ += 5;
+            }
+
+            const box = drawPrismAt(
+                bCx,
+                bCy - currentZ * z,
+                w, d, h,
+                pal.roofTop,
+                pal.wallLeft,
+                pal.wallRight
+            );
+
+            if (s === 0) firstFloorRef = box;
+            topFaceRef = box;
+
+            // Draw White Grid Windows (田) on upper floors & left wall
+            const midLeftX = (box.tW.x + box.tS.x) / 2;
+            const midLeftY = (box.tW.y + box.tS.y) / 2 + 7 * z;
+            drawIsoWindow(midLeftX - 10 * z, midLeftY - 4 * z, 11, 13, 5.5);
+            drawIsoWindow(midLeftX + 10 * z, midLeftY + 5 * z, 11, 13, 5.5);
+
+            if (s > 0) {
+                // Upper floor front-right windows (2 neat white grid windows like screenshot!)
+                const midRightX = (box.tS.x + box.tE.x) / 2;
+                const midRightY = (box.tS.y + box.tE.y) / 2 + 7 * z;
+                drawIsoWindow(midRightX - 11 * z, midRightY + 5 * z, 12, 14, -6);
+                drawIsoWindow(midRightX + 11 * z, midRightY - 5 * z, 12, 14, -6);
+            } else {
+                // Ground Floor Shopfront: Door on left-front + Striped Awning & Display Window on right-front
+                const doorX = box.bS.x + (box.bE.x - box.bS.x) * 0.24;
+                const doorY = box.bS.y + (box.bE.y - box.bS.y) * 0.24;
+                ctx.save();
+                ctx.fillStyle = pal.door;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2 * z;
+                ctx.beginPath();
+                ctx.roundRect(doorX - 6 * z, doorY - 22 * z, 12 * z, 21 * z, [4 * z, 4 * z, 0, 0]);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // Large shop window next to door
+                const winX = box.bS.x + (box.bE.x - box.bS.x) * 0.66;
+                const winY = box.bS.y + (box.bE.y - box.bS.y) * 0.66 - 24 * z;
+                drawIsoWindow(winX, winY, 18, 14, -8);
+
+                // Striped 3D Awning projecting over ground floor shopfront
+                const awningStart = {
+                    x: box.tS.x + (box.tE.x - box.tS.x) * 0.36,
+                    y: box.tS.y + (box.tE.y - box.tS.y) * 0.36 + 6 * z
+                };
+                const awningEnd = {
+                    x: box.tE.x - 2 * z,
+                    y: box.tE.y + 6 * z
+                };
+                drawStripedAwningRightFace(awningStart, awningEnd, 5, pal.awningA, pal.awningB);
+            }
+
+            currentZ += h;
+        }
+
+        // Rooftop White Parapet Railing & Flower Planter Box (matching screenshot!)
+        if (topFaceRef) {
+            const rTop = drawPrismAt(
+                bCx, bCy - currentZ * z,
+                baseW - 16, baseD - 8, 6,
+                pal.roofTop, '#ffffff', '#f1f5f9'
+            );
+
+            // Cute rooftop flower box with colorful blooms
+            const flowerBox = drawPrismAt(
+                bCx - 12 * z, bCy - (currentZ + 6) * z,
+                28, 12, 6,
+                '#4ade80', '#b45309', '#92400e'
+            );
+            const fx = (flowerBox.tN.x + flowerBox.tS.x) / 2;
+            const fy = (flowerBox.tN.y + flowerBox.tS.y) / 2;
+            ['#f43f5e', '#facc15', '#ec4899', '#38bdf8'].forEach((fc, idx) => {
+                ctx.beginPath();
+                ctx.arc(fx + (idx - 1.5) * 4.5 * z, fy - 2 * z, 2.8 * z, 0, Math.PI * 2);
+                ctx.fillStyle = fc;
+                ctx.fill();
+            });
+
+            // 3D Customizable Doraemon Logo Emblem mounted on the Rooftop!
+            const logoX = (rTop.tN.x + rTop.tS.x) / 2 + 8 * z;
+            const logoY = (rTop.tN.y + rTop.tS.y) / 2 - 14 * z;
+            drawDoraemonLogoCanvas(logoX, logoY, (lv === 20 ? 16 : 13) * z, plot.logoId);
+
+            // Circular Plot Number Badge (#1 - #16) at the top-right corner of the building (like #22, #23, #32 in the screenshot!)
+            const badgeX = rTop.tE.x + 8 * z;
+            const badgeY = rTop.tE.y - 8 * z;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(badgeX, badgeY, 13 * z, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.lineWidth = 2.5 * z;
+            ctx.strokeStyle = '#15803d';
+            ctx.stroke();
+
+            ctx.font = `900 ${Math.round(11.5 * z)}px Nunito, sans-serif`;
+            ctx.fillStyle = '#15803d';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${plot.id}`, badgeX, badgeY + 0.5 * z);
+            ctx.restore();
+        }
+
+        // Shopfront Signboard Pill ("Pet Shop", "Bakery", "Fruit Shop") + Student Owner Tag
+        if (firstFloorRef) {
+            const signX = (firstFloorRef.tS.x + firstFloorRef.tE.x) / 2 + 4 * z;
+            const signY = (firstFloorRef.tS.y + firstFloorRef.tE.y) / 2 - 2 * z;
+
+            ctx.save();
+            const shopTitle = plot.shopName || SHOP_TYPES[plot.shopType]?.eng || 'Dora Shop';
+            ctx.font = `900 ${Math.round(10 * z)}px Nunito, sans-serif`;
+            const tw = Math.max(54 * z, ctx.measureText(shopTitle).width + 16 * z);
+            const th = 17 * z;
+
+            ctx.beginPath();
+            ctx.roundRect(signX - tw / 2, signY - th / 2, tw, th, 5 * z);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.lineWidth = 1.8 * z;
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.stroke();
+
+            ctx.fillStyle = '#1e3a5f';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(shopTitle, signX, signY + 0.5 * z);
+            ctx.restore();
+        }
+
+        // Draw Outdoor Decorations on the Patio
+        drawPatioDecorations(cx, cy, plot, activeDecos, lv);
+
+        // Draw Bottom Student Name + Level & Points Tag
+        ctx.save();
+        const tagY = cy + 38 * z;
+        const labelText = `${plot.studentName} • Lv.${lv}`;
+        ctx.font = `900 ${Math.round(9.8 * z)}px Nunito, sans-serif`;
+        const pillW = Math.max(76 * z, ctx.measureText(labelText).width + 18 * z);
+        const pillH = 17 * z;
+
+        ctx.beginPath();
+        ctx.roundRect(cx - pillW / 2, tagY - pillH / 2, pillW, pillH, 999);
+        ctx.fillStyle = lv === 20 ? '#fef08a' : 'rgba(255, 255, 255, 0.92)';
+        ctx.fill();
+        ctx.lineWidth = 1.6 * z;
+        ctx.strokeStyle = '#1e3a5f';
+        ctx.stroke();
+
+        ctx.fillStyle = '#1e3a5f';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(labelText, cx, tagY + 0.5 * z);
+        ctx.restore();
+    }
+
+    function drawPatioDecorations(cx, cy, plot, activeDecos, lv) {
+        const z = camera.zoom;
+
+        // 1. Chalkboard Menu & Red Lantern
+        if (activeDecos.has('menu_lantern')) {
+            const bx = cx + 4 * z;
+            const by = cy + 24 * z;
+            ctx.save();
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.6 * z;
+            ctx.beginPath();
+            ctx.roundRect(bx - 5 * z, by - 12 * z, 10 * z, 12 * z, 2 * z);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 2. Outdoor Wooden Table & Parasol Umbrella
+        if (activeDecos.has('patio_umbrella')) {
+            const tx = cx + 32 * z;
+            const ty = cy + 10 * z;
+            ctx.save();
+            // Wooden table
+            ctx.fillStyle = '#d97706';
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.lineWidth = 1.4 * z;
+            ctx.fillRect(tx - 8 * z, ty - 6 * z, 16 * z, 6 * z);
+            ctx.strokeRect(tx - 8 * z, ty - 6 * z, 16 * z, 6 * z);
+            // Parasol pole & canopy
+            ctx.beginPath();
+            ctx.moveTo(tx, ty - 6 * z);
+            ctx.lineTo(tx, ty - 20 * z);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(tx, ty - 18 * z, 11 * z, Math.PI, 0);
+            ctx.closePath();
+            ctx.fillStyle = '#38bdf8';
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 3. Sakura Tree & Bush on Left Corner
+        if (activeDecos.has('sakura_garden')) {
+            const sx = cx - 56 * z;
+            const sy = cy + 4 * z;
+            ctx.save();
+            ctx.fillStyle = '#78350f';
+            ctx.fillRect(sx - 2.5 * z, sy - 14 * z, 5 * z, 14 * z);
+            ctx.beginPath();
+            ctx.arc(sx, sy - 18 * z, 10 * z, 0, Math.PI * 2);
+            ctx.fillStyle = '#f472b6';
+            ctx.fill();
+            ctx.lineWidth = 1.5 * z;
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 4. Floating Colorful Balloons
+        if (activeDecos.has('mascot_balloon')) {
+            const bx = cx + 48 * z;
+            const by = cy - 6 * z;
+            ['#ef4444', '#facc15', '#38bdf8'].forEach((col, i) => {
+                const bob = Math.sin(animTick * 0.08 + i) * 3 * z;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(bx + (i - 1) * 5 * z, by - 22 * z + bob, 4.5 * z, 0, Math.PI * 2);
+                ctx.fillStyle = col;
+                ctx.fill();
+                ctx.lineWidth = 1.2 * z;
+                ctx.strokeStyle = '#1e3a5f';
+                ctx.stroke();
+                ctx.restore();
+            });
+        }
+
+        // 5. Patio Fountain
+        if (activeDecos.has('fountain_neon')) {
+            const fx = cx - 28 * z;
+            const fy = cy + 20 * z;
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(fx, fy, 11 * z, 6 * z, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fill();
+            ctx.lineWidth = 1.8 * z;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 6. Pink Anywhere Door & Orbiting Drone
+        if (activeDecos.has('anywhere_drone')) {
+            drawPrismAt(cx - 44 * z, cy + 14 * z, 8, 12, 22, '#f472b6', '#ec4899', '#db2777');
+        }
+    }
+
+    /********************************************************************
+     * 7. TOWN ENVIRONMENT, STREETS, CROSSWALKS, LAMP POSTS & CHARACTERS
+     ********************************************************************/
+    function drawTownEnvironment() {
+        const z = camera.zoom;
+
+        // 1. Main Pastel Town Base Island
+        const centerTown = gridToScreen(1.5, 1.5);
+        drawDiamondAt(centerTown.x, centerTown.y, 1180, 610, '#a7f3d0', '#34d399', 4);
+        drawDiamondAt(centerTown.x, centerTown.y, 1080, 558, '#cbd5e1', '#94a3b8', 3);
+
+        // 2. Draw Crosswalks & Street Lamps at Grid Intersections (matching "Our Little Town" roads!)
+        for (let ix = 0.5; ix <= 2.5; ix += 1) {
+            for (let iy = 0.5; iy <= 2.5; iy += 1) {
+                const pt = gridToScreen(ix, iy);
+                // White zebra crosswalk stripes
+                ctx.save();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                for (let s = -2; s <= 2; s++) {
+                    ctx.fillRect(pt.x + s * 7 * z - 2 * z, pt.y - 6 * z, 4 * z, 12 * z);
+                }
+                // Classic Street Lamp Post with Glowing Yellow Globe
+                const lx = pt.x - 24 * z;
+                const ly = pt.y - 8 * z;
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 2.2 * z;
+                ctx.beginPath();
+                ctx.moveTo(lx, ly);
+                ctx.lineTo(lx, ly - 22 * z);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(lx, ly - 24 * z, 4.5 * z, 0, Math.PI * 2);
+                ctx.fillStyle = '#fde047';
+                ctx.fill();
+                ctx.lineWidth = 1.4 * z;
+                ctx.strokeStyle = '#ca8a04';
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // 3. Draw Perimeter Round Trees around the town
+        const treeCoords = [
+            { gx: -0.65, gy: 0.2 }, { gx: -0.65, gy: 1.8 }, { gx: -0.65, gy: 3.1 },
+            { gx: 0.4, gy: -0.65 }, { gx: 2.1, gy: -0.65 }, { gx: 3.4, gy: -0.65 },
+            { gx: 3.65, gy: 0.8 },  { gx: 3.65, gy: 2.4 }
+        ];
+        treeCoords.forEach((tc, idx) => {
+            const tp = gridToScreen(tc.gx, tc.gy);
+            ctx.save();
+            ctx.fillStyle = '#78350f';
+            ctx.fillRect(tp.x - 3 * z, tp.y - 16 * z, 6 * z, 16 * z);
+            ctx.beginPath();
+            ctx.arc(tp.x, tp.y - 22 * z, 13 * z, 0, Math.PI * 2);
+            ctx.fillStyle = idx % 2 === 0 ? '#4ade80' : '#facc15';
+            ctx.fill();
+            ctx.lineWidth = 1.8 * z;
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.stroke();
+            ctx.restore();
+        });
+    }
+
+    function updateAndDrawWalkers() {
+        const z = camera.zoom;
+        walkers.forEach((w, idx) => {
+            const dx = w.tx - w.gx;
+            const dy = w.ty - w.gy;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 0.05) {
+                const nodes = [0.5, 1.5, 2.5];
+                w.tx = nodes[Math.floor(Math.random() * nodes.length)];
+                w.ty = nodes[Math.floor(Math.random() * nodes.length)];
+            } else {
+                w.gx += (dx / dist) * w.speed;
+                w.gy += (dy / dist) * w.speed;
+            }
+
+            const pos = gridToScreen(w.gx, w.gy);
+            const bounce = Math.abs(Math.sin(animTick * 0.14 + idx)) * 4 * z;
+            const flyH = w.flying ? (20 + Math.sin(animTick * 0.08 + idx) * 5) * z : bounce;
+
+            ctx.save();
+            // Shadow
+            ctx.beginPath();
+            ctx.ellipse(pos.x, pos.y, 8 * z, 4 * z, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.fill();
+
+            const cy = pos.y - flyH - 10 * z;
+            const colors = { doraemon: '#1d9bf0', nobita: '#facc15', shizuka: '#f472b6', dorami: '#fde047', suneo: '#2dd4bf' };
+
+            // Body & Head
+            ctx.fillStyle = colors[w.id] || '#38bdf8';
+            ctx.strokeStyle = '#1e3a5f';
+            ctx.lineWidth = 1.6 * z;
+            ctx.beginPath();
+            ctx.roundRect(pos.x - 6 * z, cy, 12 * z, 10 * z, 3 * z);
+            ctx.fill(); ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(pos.x, cy - 5 * z, 7.5 * z, 0, Math.PI * 2);
+            ctx.fillStyle = (w.id === 'doraemon') ? '#1d9bf0' : (w.id === 'dorami' ? '#fde047' : '#fed7aa');
+            ctx.fill(); ctx.stroke();
+
+            // Spinning Take-copter on flying characters
+            if (w.flying) {
+                const span = Math.cos(animTick * 0.4 + idx) * 10 * z;
+                ctx.beginPath();
+                ctx.moveTo(pos.x - span, cy - 15 * z);
+                ctx.lineTo(pos.x + span, cy - 15 * z);
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 2.8 * z;
+                ctx.stroke();
+            }
+            ctx.restore();
+        });
+    }
+
+    function renderLoop() {
+        animTick++;
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+        ctx.clearRect(0, 0, w, h);
+
+        // 1. Draw Town Island, Roads, Crosswalks & Street Lamps
+        drawTownEnvironment();
+
+        // 2. Painter's Algorithm Back-to-Front Sort for the 16 Plots
+        const sortedPlots = [...plots].sort((a, b) => (a.gx + a.gy) - (b.gx + b.gy));
+        sortedPlots.forEach(p => drawPlotAndBuilding(p));
+
+        // 3. Draw Walking & Flying Doraemon Characters
+        updateAndDrawWalkers();
+
+        // 4. Render Confetti Particles & Floating "+Points" Texts
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const pt = particles[i];
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            pt.vy += 0.22;
+            pt.life--;
+            ctx.fillStyle = pt.color;
+            ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+            if (pt.life <= 0) particles.splice(i, 1);
+        }
+
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            const ft = floatingTexts[i];
+            ft.y -= 1.3;
+            ft.life--;
+            ctx.save();
+            ctx.font = `900 ${ft.size || 20}px Nunito, sans-serif`;
+            ctx.fillStyle = ft.color || '#10b981';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            ctx.textAlign = 'center';
+            ctx.strokeText(ft.text, ft.x, ft.y);
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.restore();
+            if (ft.life <= 0) floatingTexts.splice(i, 1);
+        }
+
+        requestAnimationFrame(renderLoop);
+    }
+
+    function spawnFireworksAtPlot(plotId, textLabel, color = '#10b981') {
+        const p = plots.find(x => x.id === plotId);
+        if (!p) return;
+        const pos = gridToScreen(p.gx, p.gy);
+        const py = pos.y - 60 * camera.zoom;
+
+        for (let i = 0; i < 28; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = 2 + Math.random() * 5.5;
+            particles.push({
+                x: pos.x,
+                y: py,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd - 2.5,
+                size: 5 + Math.random() * 4,
+                color: ['#facc15', '#38bdf8', '#f43f5e', '#10b981', '#a855f7'][i % 5],
+                life: 36 + Math.random() * 16
+            });
+        }
+        if (textLabel) {
+            floatingTexts.push({ x: pos.x, y: py - 15, text: textLabel, color, size: 22, life: 52 });
+        }
+    }
+
+    /********************************************************************
+     * 8. RIGHT-SIDE STUDENT INSPECTOR & TEACHER POINT SYSTEM
+     ********************************************************************/
+    function selectPlot(plotId, optionalTab = null) {
+        selectedPlotId = plotId;
+        if (optionalTab) activeInspectorTab = optionalTab;
+        const card = document.getElementById('inspectorCard');
+        card.classList.remove('hidden');
+        playSFX('click');
+        renderInspector();
+        renderLeftDirectory();
+    }
+
+    function closeInspector() {
+        document.getElementById('inspectorCard').classList.add('hidden');
+    }
+
+    function switchInspectorTab(tab) {
+        activeInspectorTab = tab;
+        ['award', 'shop', 'logo', 'deco'].forEach(t => {
+            const btn = document.getElementById('inspTab_' + t);
+            if (btn) {
+                btn.className = (t === tab)
+                    ? 'py-1.5 rounded-lg bg-white text-[#1e3a5f] shadow-sm font-black'
+                    : 'py-1.5 rounded-lg text-slate-600 hover:text-[#1e3a5f] font-black';
+            }
+            const dockBtn = document.getElementById('toolBtn_' + t);
+            if (dockBtn) {
+                if (t === tab) dockBtn.classList.add('active');
+                else dockBtn.classList.remove('active');
+            }
+        });
+        playSFX('click');
+        renderInspector();
+    }
+
+    function triggerBottomTool(tab) {
+        const card = document.getElementById('inspectorCard');
+        card.classList.remove('hidden');
+        switchInspectorTab(tab);
+    }
+
+    // Generate crisp inline SVG preview for each of the 10 Doraemon logos in the UI
+    function getLogoSvgHtml(logoId) {
+        if (logoId === 'doraemon') {
+            return `<svg viewBox="0 0 40 40" class="w-8 h-8 mx-auto"><circle cx="20" cy="20" r="17" fill="#1d9bf0" stroke="#1e3a5f" stroke-width="2"/><circle cx="20" cy="23" r="13" fill="#fff" stroke="#1e3a5f" stroke-width="1.8"/><circle cx="16" cy="14" r="3.5" fill="#fff" stroke="#1e3a5f" stroke-width="1.6"/><circle cx="24" cy="14" r="3.5" fill="#fff" stroke="#1e3a5f" stroke-width="1.6"/><circle cx="17" cy="14" r="1.3" fill="#1e3a5f"/><circle cx="23" cy="14" r="1.3" fill="#1e3a5f"/><circle cx="20" cy="18.5" r="2.6" fill="#ef4444"/><path d="M14 24 Q20 29 26 24" fill="none" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round"/></svg>`;
+        }
+        if (logoId === 'dorami') {
+            return `<svg viewBox="0 0 40 40" class="w-8 h-8 mx-auto"><path d="M12 8 L20 13 L28 8 L26 16 L14 16 Z" fill="#ef4444" stroke="#1e3a5f" stroke-width="1.5"/><circle cx="20" cy="22" r="15" fill="#facc15" stroke="#1e3a5f" stroke-width="2"/><circle cx="20" cy="24" r="11.5" fill="#fff" stroke="#1e3a5f" stroke-width="1.6"/><circle cx="16" cy="18" r="2" fill="#1e3a5f"/><circle cx="24" cy="18" r="2" fill="#1e3a5f"/><circle cx="20" cy="21.5" r="2.2" fill="#f43f5e"/></svg>`;
+        }
+        const obj = DORAEMON_LOGOS.find(l => l.id === logoId) || DORAEMON_LOGOS[0];
+        return `<div class="text-2xl leading-none">${obj.emoji}</div>`;
+    }
+
+    function renderInspector() {
+        const plot = plots.find(p => p.id === selectedPlotId) || plots[0];
+        if (!plot) return;
+
+        // Update Top Inspector Header
+        document.getElementById('inspPlotBadge').textContent = `#${plot.id}`;
+        const shopInfo = SHOP_TYPES[plot.shopType];
+        const titleStr = plot.shopType
+            ? `No. ${plot.id} - ${plot.shopName || shopInfo.eng} (${plot.studentName})`
+            : `No. ${plot.id} - Ô Đất Trống (${plot.studentName})`;
+        document.getElementById('inspHeaderTitle').textContent = titleStr;
+        document.getElementById('inspHeaderSub').textContent = `${getStageName(plot.level)} • ${plot.points} ⭐`;
+
+        const body = document.getElementById('inspectorBody');
+
+        // TAB 1: CỘNG ĐIỂM & QUẢN LÝ (MATCHING "OUR LITTLE TOWN" RIGHT CARD)
+        if (activeInspectorTab === 'award') {
+            const nextLvPoints = plot.level * POINTS_PER_LEVEL;
+            const currentLvProgress = plot.points % POINTS_PER_LEVEL;
+            const pct = plot.level >= MAX_LEVEL ? 100 : Math.min(100, Math.round((currentLvProgress / POINTS_PER_LEVEL) * 100));
+            const pointsNeeded = plot.level >= MAX_LEVEL ? 0 : (POINTS_PER_LEVEL - currentLvProgress);
+
+            body.innerHTML = `
+                <!-- If Plot is Empty (Lv.0), prompt student to pick a shop first OR award points to auto-build -->
+                ${!plot.shopType || plot.level <= 0 ? `
+                    <div class="bg-emerald-50 border-2 border-emerald-500 rounded-2xl p-3 text-center space-y-2">
+                        <div class="text-2xl">🌱🏡</div>
+                        <div class="font-black text-sm text-emerald-900">Ô Đất #${plot.id} Đang Trống!</div>
+                        <p class="text-xs font-bold text-emerald-700">Hãy bấm chọn loại hàng quán bên dưới hoặc cộng điểm để khởi tạo Quán Cấp 1 cho <b>${plot.studentName}</b>!</p>
+                        <button onclick="switchInspectorTab('shop')" class="pill-btn bg-emerald-500 text-white font-black text-xs px-4 py-2 rounded-xl w-full">
+                            🏗️ Chọn Hàng Quán Để Xây Ngay
+                        </button>
+                    </div>
+                ` : ''}
+
+                <!-- Points & Level Progress Card (exact "Our Little Town" layout) -->
+                <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 flex items-center gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-white border-2 border-[#1e3a5f] flex flex-col items-center justify-center shrink-0 shadow-xs">
+                        ${getLogoSvgHtml(plot.logoId)}
+                        <span class="text-[9px] font-black text-blue-700 mt-0.5">Lv.${plot.level}/20</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="font-black text-xl text-[#1e3a5f]">${plot.points} <span class="text-xs font-bold text-slate-500">points ⭐</span></span>
+                            <span class="text-[11px] font-black text-emerald-700">${plot.level >= 20 ? 'ĐẠT CẤP TỐI ĐA!' : `Còn ${pointsNeeded}⭐ lên Lv.${plot.level + 1}`}</span>
+                        </div>
+                        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden border border-slate-300 my-1">
+                            <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-300" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="text-[10px] font-bold text-slate-500">${getStageName(plot.level)}</div>
+                    </div>
+                </div>
+
+                <!-- Teacher 1-Click Award Chips (matching green pills in screenshot) -->
+                <div>
+                    <div class="text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">🎓 Award Points (Giáo viên cộng điểm):</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="awardPlotPoints(${plot.id}, 2, 'Phát biểu trả lời đúng!')" class="award-chip px-3 py-1.5 text-xs font-black flex items-center gap-1">
+                            <span>+2</span><span>Phát biểu trả lời đúng</span>
+                        </button>
+                        <button onclick="awardPlotPoints(${plot.id}, 5, 'Có làm BTVN đầy đủ!')" class="award-chip px-3 py-1.5 text-xs font-black flex items-center gap-1">
+                            <span>+5</span><span>Có làm BTVN</span>
+                        </button>
+                        <button onclick="awardPlotPoints(${plot.id}, 10, 'Kể lại bài / Thuộc từ vựng!')" class="award-chip px-3 py-1.5 text-xs font-black flex items-center gap-1">
+                            <span>+10</span><span>Kể lại bài / Từ vựng</span>
+                        </button>
+                        <button onclick="awardPlotPoints(${plot.id}, 20, 'Thảo luận nhóm xuất sắc!')" class="award-chip px-3 py-1.5 text-xs font-black flex items-center gap-1">
+                            <span>+20</span><span>Thưởng nhóm tích cực</span>
+                        </button>
+                        <button onclick="awardPlotPoints(${plot.id}, 50, 'Thưởng Nóng: Lên 1 Cấp Ngay!')" class="px-3 py-1.5 rounded-full bg-amber-300 hover:bg-amber-400 border-2 border-[#1e3a5f] text-[#1e3a5f] text-xs font-black shadow-xs">
+                            🚀 +50⭐ (Lên 1 Cấp Ngay!)
+                        </button>
+                        <button onclick="awardPlotPoints(${plot.id}, -5, 'Nhắc nhở tập trung hơn')" class="px-2.5 py-1 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-[11px] font-bold">
+                            -5 Nhắc nhở
+                        </button>
+                    </div>
+
+                    <!-- Custom Point Input Row -->
+                    <div class="flex items-center gap-1.5 mt-2.5">
+                        <input id="customPtInput" type="number" value="15" class="w-20 px-2.5 py-1.5 rounded-xl border-2 border-slate-300 font-black text-xs text-center outline-none focus:border-blue-500">
+                        <button onclick="applyCustomPoints(${plot.id})" class="pill-btn bg-blue-600 text-white font-black text-xs px-3.5 py-1.5 rounded-xl flex-1">
+                            ✨ Cộng Điểm Tùy Chỉnh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Student Name & Shop Signboard Editor -->
+                <div class="bg-white border-2 border-slate-200 rounded-2xl p-3 space-y-2">
+                    <div class="text-xs font-black text-[#1e3a5f]">🪧 Đổi Tên Học Sinh & Bảng Hiệu Quán:</div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500">👤 Tên Học Sinh sở hữu Ô #${plot.id}:</label>
+                            <input type="text" value="${plot.studentName}" onchange="updatePlotIdentity(${plot.id}, this.value, null)"
+                                class="w-full px-2.5 py-1.5 rounded-xl border-2 border-slate-300 font-black text-xs focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500">🏪 Tên Bảng Hiệu trên mái quán:</label>
+                            <input type="text" value="${plot.shopName}" onchange="updatePlotIdentity(${plot.id}, null, this.value)"
+                                class="w-full px-2.5 py-1.5 rounded-xl border-2 border-slate-300 font-black text-xs focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Direct Level Slider (Lv.1 -> Lv.20) -->
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3 space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-black text-amber-900">
+                        <span>🎚️ Chỉnh Cấp Độ Quán (Lv.1 ➔ Lv.20):</span>
+                        <span class="bg-amber-300 px-2 py-0.5 rounded-md border border-[#1e3a5f]">Cấp ${plot.level}/20</span>
+                    </div>
+                    <input type="range" min="0" max="20" value="${plot.level}" oninput="setPlotDirectLevel(${plot.id}, parseInt(this.value, 10))"
+                        class="w-full accent-blue-600 cursor-pointer">
+                    <div class="flex justify-between text-[10px] font-bold text-slate-500">
+                        <span>Lv.0 (Trống)</span>
+                        <span>Lv.8 (2 Tầng)</span>
+                        <span>Lv.15 (Plaza)</span>
+                        <span>Lv.20 (Siêu Cấp)</span>
+                    </div>
+                </div>
+
+                <!-- Reset single plot to Empty Land -->
+                <div class="pt-1 flex justify-between items-center text-[11px] font-bold">
+                    <button onclick="clearSinglePlot(${plot.id})" class="text-rose-600 hover:underline font-extrabold">🌱 Xóa quán này về Nền Đất Trống</button>
+                    <span class="text-slate-400">Ô số #${plot.id}</span>
+                </div>
+            `;
+        }
+
+        // TAB 2: CHỌN LOẠI HÀNG QUÁN & MÀU SẮC PASTEL
+        else if (activeInspectorTab === 'shop') {
+            const shopCards = Object.values(SHOP_TYPES).map(st => {
+                const active = plot.shopType === st.id && plot.level > 0;
+                return `
+                    <button onclick="selectPlotShopType(${plot.id}, '${st.id}')" class="p-2.5 rounded-xl border-2 text-left flex items-center gap-2 transition ${active ? 'bg-amber-100 border-[#1e3a5f] shadow-xs' : 'bg-white border-slate-200 hover:border-blue-400'}">
+                        <span class="text-2xl">${st.icon}</span>
+                        <div class="overflow-hidden">
+                            <div class="font-black text-xs text-[#1e3a5f] truncate">${st.eng}</div>
+                            <div class="text-[10px] font-bold text-slate-500 truncate">${st.name}</div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+
+            const colorSwatches = Object.values(PASTEL_PALETTES).map(pal => {
+                const active = plot.colorKey === pal.id;
+                return `
+                    <button onclick="selectPlotColor(${plot.id}, '${pal.id}')" class="p-2 rounded-xl border-2 flex items-center gap-2 ${active ? 'border-[#1e3a5f] bg-slate-100 font-black' : 'border-slate-200 bg-white'}">
+                        <span class="w-5 h-5 rounded-full border border-slate-700 shrink-0" style="background: ${pal.wallLeft}"></span>
+                        <span class="text-[11px] font-extrabold truncate">${pal.name}</span>
+                    </button>
+                `;
+            }).join('');
+
+            body.innerHTML = `
+                <div>
+                    <div class="text-xs font-black text-[#1e3a5f] mb-1.5">🏪 1. Chọn Loại Hàng Quán Xây Dựng:</div>
+                    <div class="grid grid-cols-2 gap-1.5">${shopCards}</div>
+                </div>
+                <div class="pt-2 border-t border-slate-200">
+                    <div class="text-xs font-black text-[#1e3a5f] mb-1.5">🎨 2. Chọn Tông Màu Pastel Tòa Nhà:</div>
+                    <div class="grid grid-cols-2 gap-1.5">${colorSwatches}</div>
+                </div>
+            `;
+        }
+
+        // TAB 3: 10 MẪU LOGO HÌNH DORAEMON TRÊN MÁI NHÀ
+        else if (activeInspectorTab === 'logo') {
+            const logoCards = DORAEMON_LOGOS.map(lg => {
+                const active = plot.logoId === lg.id;
+                return `
+                    <button onclick="selectPlotLogo(${plot.id}, '${lg.id}')" class="p-2.5 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition ${active ? 'bg-sky-100 border-[#1e3a5f] ring-2 ring-amber-400' : 'bg-white border-slate-200 hover:border-blue-400'}">
+                        ${getLogoSvgHtml(lg.id)}
+                        <span class="text-[10px] font-black text-center leading-tight text-[#1e3a5f]">${lg.name}</span>
+                    </button>
+                `;
+            }).join('');
+
+            body.innerHTML = `
+                <div>
+                    <div class="text-xs font-black text-[#1e3a5f] mb-1">🐱 Chọn Logo Doraemon 3D Gắn Lên Mái Nhà:</div>
+                    <p class="text-[11px] font-bold text-slate-500 mb-2">Logo sẽ hiển thị nổi bật trên đỉnh tòa nhà của bạn!</p>
+                    <div class="grid grid-cols-2 gap-2">${logoCards}</div>
+                </div>
+            `;
+        }
+
+        // TAB 4: 6 GÓI TRANG TRÍ NGOÀI TRỜI (DECORATION PACKS)
+        else if (activeInspectorTab === 'deco') {
+            const activeSet = getActiveDecos(plot);
+            const decoRows = DECORATION_PACKS.map(pk => {
+                const isOn = activeSet.has(pk.id);
+                return `
+                    <div onclick="togglePlotDeco(${plot.id}, '${pk.id}')" class="cursor-pointer p-2.5 rounded-xl border-2 flex items-center justify-between transition ${isOn ? 'bg-emerald-50 border-emerald-600' : 'bg-white border-slate-200'}">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-2xl">${pk.icon}</span>
+                            <div>
+                                <div class="font-black text-xs text-[#1e3a5f]">${pk.name}</div>
+                                <div class="text-[10px] font-bold text-slate-500">Tự động mở ở Cấp ${pk.unlockLv} (Bấm để Bật/Tắt ngay)</div>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${isOn ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}">
+                            ${isOn ? 'Đang Bật' : 'Tắt'}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+
+            body.innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-[#1e3a5f]">🌸 Gói Trang Trí Sân Vườn Quanh Quán:</span>
+                        <button onclick="enableAllDecos(${plot.id})" class="text-[11px] font-black text-blue-600 hover:underline">Bật tất cả</button>
+                    </div>
+                    <div class="space-y-1.5">${decoRows}</div>
+                </div>
+            `;
+        }
+    }
+
+    /********************************************************************
+     * 9. PLOT MODIFICATION ACTIONS (POINTS, LEVEL UP, SHOP TYPE, LOGO)
+     ********************************************************************/
+    function awardPlotPoints(plotId, delta, reason) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+
+        // If plot was Empty Land (Lv.0) and receives positive points, automatically build a starter shop!
+        if ((!plot.shopType || plot.level <= 0) && delta > 0) {
+            plot.shopType = 'cafe';
+            plot.shopName = `Cafe ${plot.studentName}`;
+            plot.level = 1;
+        }
+
+        const oldLevel = plot.level;
+        plot.points = Math.max(0, plot.points + delta);
+
+        // Calculate new level based on points (every 50 points = +1 level, up to Lv.20)
+        if (plot.shopType) {
+            const computedLv = Math.min(MAX_LEVEL, Math.max(1, Math.floor(plot.points / POINTS_PER_LEVEL) + 1));
+            if (computedLv > plot.level || delta < 0) {
+                plot.level = computedLv;
+            }
+        }
+
+        if (plot.level > oldLevel) {
+            playSFX('levelup');
+            spawnFireworksAtPlot(plot.id, `LÊN CẤP ${plot.level}! 🎉`, '#f59e0b');
+            showToast(`🎉 ${plot.studentName.toUpperCase()} LÊN CẤP ${plot.level}/20!`, `${plot.shopName} đã tiến hóa lên ${getStageName(plot.level)}!`, '🏢');
+        } else {
+            playSFX('point');
+            const sign = delta >= 0 ? `+${delta}` : `${delta}`;
+            spawnFireworksAtPlot(plot.id, `${sign} ⭐`, delta >= 0 ? '#10b981' : '#ef4444');
+            showToast(`🎓 Ô #${plot.id} - ${plot.studentName}: ${sign} ⭐`, reason, '🌟');
+        }
+
+        saveState();
+        renderInspector();
+    }
+
+    function applyCustomPoints(plotId) {
+        const val = parseInt(document.getElementById('customPtInput')?.value, 10) || 10;
+        awardPlotPoints(plotId, val, 'Điểm thưởng tùy chỉnh của Giáo viên');
+    }
+
+    function instantLevelUpSelected() {
+        const plot = plots.find(p => p.id === selectedPlotId);
+        if (!plot) return;
+        if (!plot.shopType || plot.level <= 0) {
+            plot.shopType = 'cafe';
+            plot.shopName = `Cafe ${plot.studentName}`;
+            plot.level = 1;
+            plot.points = 10;
+            playSFX('levelup');
+            spawnFireworksAtPlot(plot.id, 'KHAI TRƯƠNG LV.1!', '#10b981');
+        } else if (plot.level < MAX_LEVEL) {
+            plot.level += 1;
+            plot.points = Math.max(plot.points, (plot.level - 1) * POINTS_PER_LEVEL);
+            playSFX('levelup');
+            spawnFireworksAtPlot(plot.id, `LÊN CẤP ${plot.level}/20!`, '#f59e0b');
+            showToast(`⬆️ ĐÃ NÂNG Ô #${plot.id} LÊN CẤP ${plot.level}/20!`, `${plot.studentName} - ${getStageName(plot.level)}`, '🚀');
+        } else {
+            showToast('👑 ĐÃ ĐẠT CẤP 20 TỐI ĐA!', `${plot.shopName} đã là Siêu Cửa Hàng Thế Kỷ 22!`, '👑');
+        }
+        saveState();
+        renderInspector();
+    }
+
+    function setPlotDirectLevel(plotId, newLv) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        if (newLv <= 0) {
+            plot.level = 0;
+            plot.shopType = null;
+            plot.points = 0;
+        } else {
+            if (!plot.shopType) plot.shopType = 'cafe';
+            plot.level = newLv;
+            plot.points = (newLv - 1) * POINTS_PER_LEVEL;
+        }
+        playSFX('click');
+        saveState();
+        renderInspector();
+    }
+
+    function updatePlotIdentity(plotId, newStudent, newShopName) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        if (newStudent !== null) plot.studentName = newStudent.trim() || `Học sinh #${plotId}`;
+        if (newShopName !== null) plot.shopName = newShopName.trim() || 'Dora Shop';
+        saveState();
+        renderInspector();
+        showToast('🪧 ĐÃ CẬP NHẬT BẢNG HIỆU!', `Ô #${plot.id}: ${plot.studentName} • "${plot.shopName}"`, '✨');
+    }
+
+    function selectPlotShopType(plotId, typeId) {
+        const plot = plots.find(p => p.id === plotId);
+        const st = SHOP_TYPES[typeId];
+        if (!plot || !st) return;
+        const wasEmpty = !plot.shopType || plot.level <= 0;
+        plot.shopType = typeId;
+        if (wasEmpty) {
+            plot.level = 1;
+            plot.points = Math.max(10, plot.points);
+            plot.colorKey = st.defaultColor;
+        }
+        plot.shopName = st.eng;
+        playSFX('levelup');
+        spawnFireworksAtPlot(plot.id, `${st.icon} ${st.eng}!`, '#38bdf8');
+        saveState();
+        renderInspector();
+    }
+
+    function selectPlotColor(plotId, colorKey) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        plot.colorKey = colorKey;
+        playSFX('click');
+        saveState();
+        renderInspector();
+    }
+
+    function selectPlotLogo(plotId, logoId) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        plot.logoId = logoId;
+        playSFX('point');
+        spawnFireworksAtPlot(plot.id, 'ĐỔI LOGO DORAEMON!', '#facc15');
+        saveState();
+        renderInspector();
+    }
+
+    function togglePlotDeco(plotId, decoId) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        const set = getActiveDecos(plot);
+        if (set.has(decoId)) set.delete(decoId);
+        else set.add(decoId);
+        plot.customDecos = Array.from(set);
+        playSFX('click');
+        saveState();
+        renderInspector();
+    }
+
+    function enableAllDecos(plotId) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        plot.customDecos = DECORATION_PACKS.map(d => d.id);
+        playSFX('levelup');
+        saveState();
+        renderInspector();
+    }
+
+    function clearSinglePlot(plotId) {
+        const plot = plots.find(p => p.id === plotId);
+        if (!plot) return;
+        plot.shopType = null;
+        plot.level = 0;
+        plot.points = 0;
+        plot.customDecos = null;
+        playSFX('click');
+        saveState();
+        renderInspector();
+    }
+
+    /********************************************************************
+     * 10. DIRECTORY, TOP SUMMARY & CLASSROOM MODALS
+     ********************************************************************/
+    function updateTopSummary() {
+        const built = plots.filter(p => p.shopType && p.level > 0).length;
+        const mega = plots.filter(p => p.level === MAX_LEVEL).length;
+        const totalPts = plots.reduce((acc, p) => acc + p.points, 0);
+
+        document.getElementById('builtCountBadge').textContent = `${built}/16 Ô đã xây`;
+        document.getElementById('totalTownPoints').textContent = `${totalPts.toLocaleString()} ⭐`;
+        document.getElementById('megaCountDisplay').textContent = `${mega} / 16 👑`;
+
+        const pct = Math.min(100, Math.round((totalPts / (16 * 600)) * 100));
+        document.getElementById('townProgressBar').style.width = `${Math.max(8, pct)}%`;
+    }
+
+    let leftDirCollapsed = false;
+    function toggleLeftDirectory() {
+        leftDirCollapsed = !leftDirCollapsed;
+        document.getElementById('leftDirectoryBody').style.display = leftDirCollapsed ? 'none' : 'block';
+        document.getElementById('leftDirectoryFooter').style.display = leftDirCollapsed ? 'none' : 'flex';
+        document.getElementById('toggleDirBtn').textContent = leftDirCollapsed ? '+' : '−';
+    }
+
+    function renderLeftDirectory() {
+        const container = document.getElementById('leftDirectoryBody');
+        if (!container) return;
+
+        container.innerHTML = plots.map(p => {
+            const isSel = p.id === selectedPlotId;
+            const st = SHOP_TYPES[p.shopType];
+            const badgeCol = p.level === 20 ? 'bg-amber-400 text-[#1e3a5f]' : (p.level > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600');
+
+            return `
+                <div onclick="selectPlot(${p.id}); focusCameraOnPlot(${p.id})"
+                    class="cursor-pointer p-2 rounded-xl border-2 flex items-center justify-between transition ${isSel ? 'bg-amber-100 border-[#1e3a5f] shadow-xs' : 'bg-white hover:bg-sky-50 border-slate-200'}">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="w-6 h-6 rounded-full ${badgeCol} font-black text-[11px] flex items-center justify-center shrink-0 border border-[#1e3a5f]">${p.id}</span>
+                        <div class="truncate">
+                            <div class="font-black text-xs text-[#1e3a5f] truncate">${p.studentName}</div>
+                            <div class="text-[10px] font-bold text-slate-500 truncate">${st ? `${st.icon} ${p.shopName}` : '🌱 Ô đất trống'}</div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 pl-1">
+                        <div class="font-black text-[11px] text-blue-700">${p.level > 0 ? `Lv.${p.level}` : 'Lv.0'}</div>
+                        <div class="text-[10px] font-extrabold text-amber-600">${p.points}⭐</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openEmptyConfirmModal() {
+        document.getElementById('emptyConfirmModal').classList.remove('hidden');
+    }
+
+    function resetAllPlotsToEmptyLand() {
+        plots = createEmptyLandPlots();
+        closeModal('emptyConfirmModal');
+        saveState();
+        renderInspector();
+        resetCamera();
+        playSFX('levelup');
+        showToast('🌱 ĐÃ ĐẶT 16 Ô VỀ NỀN ĐẤT TRỐNG!', 'Học sinh có thể bấm vào từng ô đất để tự chọn hàng quán xây dựng từ Cấp 1!', '🏡');
+    }
+
+    function loadSamplePastelTown() {
+        plots = createSamplePastelTown();
+        saveState();
+        renderInspector();
+        resetCamera();
+        playSFX('levelup');
+        showToast('✨ ĐÃ NẠP THỊ TRẤN PASTEL MẪU!', 'Đầy đủ Pet Shop, Bakery, Fruit Shop, Flower Shop & Logo Doraemon!', '🌸');
+    }
+
+    function openRandomPickerModal() {
+        document.getElementById('randomPickerModal').classList.remove('hidden');
+        document.getElementById('randomGoBtn').classList.add('hidden');
+        spinRandomStudent();
+    }
+
+    function spinRandomStudent() {
+        let count = 0;
+        const totalSpins = 14;
+        const interval = setInterval(() => {
+            const pick = plots[Math.floor(Math.random() * plots.length)];
+            document.getElementById('randomPlotNumber').textContent = `Ô NHÀ SỐ #${pick.id}`;
+            document.getElementById('randomStudentName').textContent = `👤 ${pick.studentName}`;
+            document.getElementById('randomShopInfo').textContent = pick.shopType ? `${pick.shopName} (Cấp ${pick.level}/20 • ${pick.points}⭐)` : '🌱 Đang ở Nền Đất Trống';
+            playSFX('click');
+            count++;
+            if (count >= totalSpins) {
+                clearInterval(interval);
+                randomPickedPlotId = pick.id;
+                document.getElementById('randomGoBtn').classList.remove('hidden');
+                playSFX('levelup');
+            }
+        }, 75);
+    }
+
+    function selectRandomPickedPlot() {
+        closeModal('randomPickerModal');
+        if (randomPickedPlotId) {
+            selectPlot(randomPickedPlotId, 'award');
+            focusCameraOnPlot(randomPickedPlotId);
+        }
+    }
+
+    function openLeaderboardModal() {
+        document.getElementById('leaderboardModal').classList.remove('hidden');
+        const sorted = [...plots].sort((a, b) => b.points - a.points);
+        const list = document.getElementById('leaderboardList');
+
+        list.innerHTML = sorted.map((p, idx) => {
+            const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx + 1}`));
+            const st = SHOP_TYPES[p.shopType];
+            return `
+                <div class="p-3 rounded-2xl border-2 border-slate-200 bg-white flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-lg w-8 text-center">${medal}</span>
+                        <div>
+                            <div class="font-black text-sm text-[#1e3a5f]">👤 ${p.studentName} <span class="text-xs font-bold text-slate-400">(Ô #${p.id})</span></div>
+                            <div class="text-xs font-bold text-slate-500">${st ? `${st.icon} ${p.shopName} • ${getStageName(p.level)}` : '🌱 Chưa xây quán'}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="text-right">
+                            <div class="font-black text-sm text-blue-700">Cấp ${p.level}/20</div>
+                            <div class="font-extrabold text-xs text-amber-600">${p.points} ⭐</div>
+                        </div>
+                        <button onclick="closeModal('leaderboardModal'); selectPlot(${p.id}, 'award'); focusCameraOnPlot(${p.id})" class="pill-btn bg-emerald-500 text-white font-black text-xs px-3 py-1.5 rounded-xl">
+                            + Điểm
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openClassRewardModal() {
+        document.getElementById('classRewardModal').classList.remove('hidden');
+    }
+
+    function rewardEntireClass(pts, reason) {
+        plots.forEach(p => {
+            if (!p.shopType || p.level <= 0) {
+                p.shopType = 'cafe';
+                p.shopName = `Cafe ${p.studentName}`;
+                p.level = 1;
+            }
+            p.points += pts;
+            p.level = Math.min(MAX_LEVEL, Math.max(1, Math.floor(p.points / POINTS_PER_LEVEL) + 1));
+        });
+        closeModal('classRewardModal');
+        playSFX('levelup');
+        plots.forEach(p => spawnFireworksAtPlot(p.id, `+${pts}⭐`, '#10b981'));
+        saveState();
+        renderInspector();
+        showToast(`🎉 THƯỞNG CẢ LỚP +${pts} ⭐!`, reason, '🏆');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    let toastTimer = null;
+    function showToast(title, sub, icon = '🎉') {
+        const banner = document.getElementById('toastBanner');
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastSub').textContent = sub;
+        document.getElementById('toastIcon').textContent = icon;
+        banner.classList.remove('opacity-0', '-translate-y-4');
+        banner.classList.add('opacity-100', 'translate-y-0');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            banner.classList.remove('opacity-100', 'translate-y-0');
+            banner.classList.add('opacity-0', '-translate-y-4');
+        }, 3200);
+    }
+
+    /********************************************************************
+     * 11. INITIALIZATION ON WINDOW LOAD
+     ********************************************************************/
+    window.onload = function () {
+        loadState();
+        initWalkers();
+        resizeCanvas();
+        resetCamera();
+        window.addEventListener('resize', resizeCanvas);
+        updateTopSummary();
+        renderLeftDirectory();
+        renderInspector();
+        renderLoop();
+    };
+    </script>
+</body>
+</html>
+```
+
+### Tóm tắt các tính năng đã được tích hợp đầy đủ trong mã nguồn:
+1. **Di chuyển & Phóng to/Thu nhỏ bản đồ mượt mà 100%**: Hỗ trợ giữ chuột trái kéo bản đồ, lăn chuột phóng to/thu nhỏ, cảm ứng 1 ngón kéo & 2 ngón zoom trên màn hình tương tác lớp học, phím `WASD` / Mũi tên và cụm phím điều hướng góc dưới bên phải (`⬆️`, `⬇️`, `⬅️`, `➡️`, `➕`, `➖`, `🎯`).
+2. **Kiến trúc Pastel 3D ("Our Little Town") & Tiến hóa từ Cấp 1 ➔ Cấp 20**:
+   - Đầy đủ mái hiên kẻ sọc 3D, cửa sổ khung trắng (`田`), ban công trồng hoa, sân gạch caro, vạch kẻ đường, đèn đường và huy hiệu số ô tròn (`#1` ➔ `#16`).
+   - Có nút **`🌱 Về Đất Trống`** trên thanh trên cùng để chuyển toàn bộ 16 ô về nền cỏ trống cho học sinh tự chọn loại hàng quán xây từ đầu, hoặc bấm **`✨ Nạp Mẫu Đẹp`** để xem ngay thị trấn Pastel rực rỡ.
+3. **10 Logo Hình Doraemon 3D & Bảng Cộng Điểm Giáo Viên Bên Phải**:
+   - Học sinh chọn đổi **10 mẫu Logo Doraemon** (*Mặt Mèo Doraemon, Mặt Dorami Nơ Đỏ, Chuông Vàng, Chong Chóng Tre xoay, Cánh Cửa Thần Kỳ, Bánh Rán Dorayaki, Bánh Mì A+, Kính Nobita, Vương Miện, Cỗ Máy Thời Gian*) gắn trực tiếp trên đỉnh mái nhà.
+   - Giáo viên bấm vào bất kỳ ô nhà nào để cộng điểm nhanh (`+2 Phát biểu trả lời đúng`, `+5 Có làm BTVN`, `+10 Kể lại bài`, `+50 Lên 1 Cấp Ngay`) kèm pháo hoa và âm thanh chúc mừng.
